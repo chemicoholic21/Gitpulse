@@ -26,6 +26,7 @@
         "recharts": "latest"
     },
     "devDependencies": {
+        "@tailwindcss/postcss": "^4.2.1",
         "@types/node": "^22",
         "@types/react": "^19",
         "@types/react-dom": "^19",
