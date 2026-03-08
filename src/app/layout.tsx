@@ -6,7 +6,7 @@ import Navbar from "@/components/Navbar";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXTAUTH_URL || "http://localhost:3000"),
+  metadataBase: new URL(process.env.NEXTAUTH_URL || "https://gitpulse-one.vercel.app/"),
   title: "GitPulse — GitHub Contribution Analytics",
   description: "Score your open source impact. See where your GitHub contributions truly matter.",
   openGraph: {
