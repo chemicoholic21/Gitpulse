@@ -1,6 +1,6 @@
 import { Redis } from "@upstash/redis";
 import { Ratelimit } from "@upstash/ratelimit";
-import { ScoredProfile } from "./scoring";
+import { ScoredProfile, RawGitHubData } from "./scoring";
 
 // ---------------------------------------------------------------------------
 // Client Initialization
@@ -38,9 +38,20 @@ export async function setCachedAnalysis(
   await redis.set(key, profile, { ex: CACHE_TTL });
 }
 
-// ---------------------------------------------------------------------------
-// Rate Limiting
-// ---------------------------------------------------------------------------
+export async function getRawAnalysis(
+  username: string
+): Promise<RawGitHubData | null> {
+  const key = `raw:analysis:${username.toLowerCase()}`;
+  return await redis.get<RawGitHubData>(key);
+}
+
+export async function setRawAnalysis(
+  username: string,
+  rawData: RawGitHubData
+): Promise<void> {
+  const key = `raw:analysis:${username.toLowerCase()}`;
+  await redis.set(key, rawData, { ex: CACHE_TTL });
+}
 
 export async function checkRateLimit(
   ip: string

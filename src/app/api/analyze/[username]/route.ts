@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { checkRateLimit, getCachedAnalysis, setCachedAnalysis } from "@/lib/redis";
+import { checkRateLimit, getCachedAnalysis, setCachedAnalysis, getRawAnalysis, setRawAnalysis } from "@/lib/redis";
 import { fetchUserAnalysis } from "@/lib/github";
 import { computeScore } from "@/lib/scoring";
 import { db } from "@/lib/db";
@@ -24,38 +24,44 @@ export async function GET(
       );
     }
 
-    // 2. Check Redis cache
+    // 2. Check Redis cache for scored profile
     const cached = await getCachedAnalysis(username);
     if (cached) {
       return NextResponse.json(cached);
     }
 
-    // 3. Get GitHub token from header (own profile), session, or env
-    const headerToken = request.headers.get("x-github-token");
-    const session = await auth();
-    const token = headerToken || session?.accessToken || process.env.GITHUB_TOKEN;
+    // 3. Check Redis cache for raw data (maybe we just need to re-score)
+    let rawData = await getRawAnalysis(username);
 
-    // 4. Fetch analysis from GitHub
-    let rawData;
-    try {
-      rawData = await fetchUserAnalysis(username, token);
-    } catch (error: any) {
-      if (error.message.includes("not found")) {
-        return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if (!rawData) {
+      // 4. Get GitHub token from header (own profile), session, or env
+      const headerToken = request.headers.get("x-github-token");
+      const session = await auth();
+      const token = headerToken || session?.accessToken || process.env.GITHUB_TOKEN;
+
+      // 5. Fetch analysis from GitHub
+      try {
+        rawData = await fetchUserAnalysis(username, token);
+        // Store raw data in Redis
+        await setRawAnalysis(username, rawData);
+      } catch (error: any) {
+        if (error.message.includes("not found")) {
+          return NextResponse.json({ error: "User not found" }, { status: 404 });
+        }
+        if (error.message.includes("rate limit")) {
+          return NextResponse.json(
+            { error: "GitHub rate limit reached. Please log in." },
+            { status: 429 }
+          );
+        }
+        throw error;
       }
-      if (error.message.includes("rate limit")) {
-        return NextResponse.json(
-          { error: "GitHub rate limit reached. Please log in." },
-          { status: 429 }
-        );
-      }
-      throw error;
     }
 
-    // 5. Compute score
+    // 6. Compute score
     const profile = computeScore(rawData);
 
-    // 6. Store in Redis cache
+    // 7. Store in Redis cache (scored)
     await setCachedAnalysis(username, profile);
 
     // 7. Upsert into Neon DB (analyses table)
