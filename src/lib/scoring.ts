@@ -35,6 +35,7 @@ export type ExperienceLevel =
 
 export interface TopRepositorySummary {
     name: string;
+    ownerLogin: string;
     stars: number;
     userPRs: number;
     totalPRs: number;
@@ -90,6 +91,7 @@ export function computeScore(raw: RawGitHubData): ScoredProfile {
 
         scoredRepos.push({
             name: repo.name,
+            ownerLogin: repo.ownerLogin,
             stars,
             userPRs,
             totalPRs,

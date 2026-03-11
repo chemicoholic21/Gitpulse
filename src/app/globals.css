@@ -1,15 +1,19 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:wght@400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
 @import "tailwindcss";
 
 @layer base {
-
     html,
     body {
-        background-color: #030712;
+        background-color: #0d1117;
         color: #d1d5db;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         font-family: "Inter", system-ui, sans-serif;
+        overflow-x: hidden;
+    }
+
+    h1, h2, h3, .font-serif {
+        font-family: "Playfair Display", serif;
     }
 
     code,
@@ -27,4 +31,55 @@
     button {
         cursor: pointer;
     }
+}
+
+@layer components {
+    .grain-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0.05;
+        background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+        filter: contrast(150%) brightness(100%);
+    }
+
+    .atmospheric-blur {
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, rgba(56, 189, 248, 0) 70%);
+        filter: blur(80px);
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    .cinematic-card {
+        @apply bg-[#161b22]/40 backdrop-blur-md border border-white/10 rounded-lg transition-all duration-500 hover:border-white/20 hover:shadow-2xl hover:shadow-sky-500/10;
+    }
+
+    .editorial-heading {
+        @apply font-serif text-white tracking-tight leading-tight;
+    }
+}
+
+@keyframes shimmer {
+    0% { transform: translate(0, 0); }
+    10% { transform: translate(-5%, -5%); }
+    20% { transform: translate(-10%, 5%); }
+    30% { transform: translate(5%, -10%); }
+    40% { transform: translate(-5%, 15%); }
+    50% { transform: translate(-10%, 5%); }
+    60% { transform: translate(15%, 0); }
+    70% { transform: translate(0, 10%); }
+    80% { transform: translate(-15%, 0); }
+    90% { transform: translate(10%, 5%); }
+    100% { transform: translate(5%, 0); }
+}
+
+.animate-shimmer {
+    animation: shimmer 1s steps(2) infinite;
 }

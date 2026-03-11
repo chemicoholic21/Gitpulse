@@ -30,11 +30,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-gray-950 text-gray-300 antialiased">
+      <body className="antialiased min-h-screen relative">
+        <div className="grain-overlay pointer-events-none" aria-hidden="true" />
         <SessionProvider>
           <QueryProvider>
             <Navbar />
-            {children}
+            <main className="relative z-10">{children}</main>
             <RateLimitBanner />
           </QueryProvider>
         </SessionProvider>
