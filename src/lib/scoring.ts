@@ -6,6 +6,13 @@ export interface RawGitHubData {
         followers: number;
         following: number;
         createdAt: string;
+        updatedAt: string;
+        isHireable: boolean;
+        company: string | null;
+        websiteUrl: string | null;
+        location: string | null;
+        email: string | null;
+        twitterUsername: string | null;
     };
     repos: Array<{
         name: string;

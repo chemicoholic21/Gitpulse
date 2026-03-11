@@ -13,6 +13,13 @@ interface UserAnalysisResponse {
     followers: { totalCount: number };
     following: { totalCount: number };
     createdAt: string;
+    updatedAt: string;
+    isHireable: boolean;
+    company: string | null;
+    websiteUrl: string | null;
+    location: string | null;
+    email: string;
+    twitterUsername: string | null;
     repositories: {
       nodes: Array<{
         name: string;
@@ -81,6 +88,13 @@ const USER_ANALYSIS_QUERY = `
       followers { totalCount }
       following { totalCount }
       createdAt
+      updatedAt
+      isHireable
+      company
+      websiteUrl
+      location
+      email
+      twitterUsername
       repositories(
         first: 50
         orderBy: { field: STARGAZERS, direction: DESC }
@@ -213,6 +227,13 @@ export async function fetchUserAnalysis(
       followers: user.followers.totalCount,
       following: user.following.totalCount,
       createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      isHireable: user.isHireable,
+      company: user.company,
+      websiteUrl: user.websiteUrl,
+      location: user.location,
+      email: user.email,
+      twitterUsername: user.twitterUsername,
     },
     repos,
   };
