@@ -1,11 +1,19 @@
 import { graphql } from "@octokit/graphql";
 import { RawGitHubData } from "./scoring";
+import { getBestToken, updateTokenPoints } from "./pat-pool";
 
 // ---------------------------------------------------------------------------
 // GraphQL query types (responses)
 // ---------------------------------------------------------------------------
 
-interface UserAnalysisResponse {
+interface RateLimitFragment {
+  rateLimit: {
+    remaining: number;
+    cost: number;
+  };
+}
+
+interface UserAnalysisResponse extends RateLimitFragment {
   user: {
     name: string | null;
     avatarUrl: string;
@@ -47,7 +55,7 @@ interface UserAnalysisResponse {
   } | null;
 }
 
-interface SearchResponse {
+interface SearchResponse extends RateLimitFragment {
   search: {
     issueCount: number;
     nodes: Array<{
@@ -63,16 +71,10 @@ interface SearchResponse {
 // Client
 // ---------------------------------------------------------------------------
 
-function getClient(token?: string) {
-  const auth = token ?? process.env.GITHUB_TOKEN;
-  if (!auth) {
-    throw new Error(
-      "No GitHub token provided. Pass a token or set GITHUB_TOKEN."
-    );
-  }
+function getClient(token: string) {
   return graphql.defaults({
     headers: {
-      authorization: `token ${auth}`,
+      authorization: `token ${token}`,
     },
   });
 }
@@ -83,6 +85,7 @@ function getClient(token?: string) {
 
 const USER_ANALYSIS_QUERY = `
   query UserAnalysis($login: String!) {
+    rateLimit { remaining cost }
     user(login: $login) {
       name
       avatarUrl
@@ -138,6 +141,7 @@ const USER_ANALYSIS_QUERY = `
 
 const SEARCH_MERGED_PRS_QUERY = `
   query SearchMergedPrs($searchQuery: String!) {
+    rateLimit { remaining cost }
     search(query: $searchQuery, type: ISSUE, first: 100) {
       nodes {
         ... on PullRequest {
@@ -153,13 +157,22 @@ const SEARCH_MERGED_PRS_QUERY = `
 
 export async function fetchUserAnalysis(
   username: string,
-  token?: string
+  providedToken?: string
 ): Promise<RawGitHubData> {
+  const { token, index } = providedToken 
+    ? { token: providedToken, index: -1 } 
+    : await getBestToken();
+
   const client = getClient(token);
 
   const userRes = await client<UserAnalysisResponse>(USER_ANALYSIS_QUERY, {
     login: username,
   });
+
+  // Update token points in pool if not a manual session token
+  if (index !== -1) {
+    await updateTokenPoints(index, userRes.rateLimit.remaining);
+  }
 
   const user = userRes.user;
   if (!user) {
@@ -206,6 +219,11 @@ export async function fetchUserAnalysis(
       const searchRes = await client<SearchResponse>(SEARCH_MERGED_PRS_QUERY, {
         searchQuery,
       });
+
+      // Update token points again after second query
+      if (index !== -1) {
+        await updateTokenPoints(index, searchRes.rateLimit.remaining);
+      }
 
       const countsByRepo = new Map<string, number>();
       for (const node of searchRes.search.nodes) {

@@ -21,8 +21,11 @@ export default function Navbar() {
             <Link href="/" className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-500 hover:text-white transition-all">
               Identity
             </Link>
+            <Link href="/discover" className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-500 hover:text-white transition-all">
+              Discover
+            </Link>
             <Link href="/leaderboard" className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-500 hover:text-white transition-all">
-              Protocol
+              Leaderboard
             </Link>
           </div>
         </div>
