@@ -2,6 +2,7 @@ export interface RawGitHubData {
     user: {
         name: string | null;
         avatarUrl: string;
+        url: string;
         bio: string | null;
         followers: number;
         following: number;
@@ -71,8 +72,19 @@ export function deriveExperienceLevel(totalScore: number): ExperienceLevel {
 export interface LeaderboardEntry {
     rank: number;
     username: string;
-    totalScore: number;
+    name: string | null;
     avatarUrl: string;
+    url: string | null;
+    totalScore: number;
+    company: string | null;
+    blog: string | null;
+    location: string | null;
+    email: string | null;
+    bio: string | null;
+    twitterUsername: string | null;
+    hireable: boolean | null;
+    createdAt: string | null;
+    updatedAt: string | null;
 }
 
 export function computeScore(raw: RawGitHubData): ScoredProfile {

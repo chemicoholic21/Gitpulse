@@ -100,6 +100,7 @@ export async function GET(
         username: username,
         name: rawData.user.name,
         avatarUrl: rawData.user.avatarUrl,
+        url: rawData.user.url,
         totalScore: profile.totalScore,
         company: rawData.user.company,
         blog: rawData.user.websiteUrl,
@@ -116,6 +117,7 @@ export async function GET(
         set: {
           name: rawData.user.name,
           avatarUrl: rawData.user.avatarUrl,
+          url: rawData.user.url,
           totalScore: profile.totalScore,
           company: rawData.user.company,
           blog: rawData.user.websiteUrl,

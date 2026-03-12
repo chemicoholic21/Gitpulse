@@ -42,6 +42,7 @@ export default function UserProfile({ username }: { username: string }) {
   const handleRefresh = () => {
     queryClient.invalidateQueries({ queryKey: ["analysis", username.toLowerCase()] });
     queryClient.invalidateQueries({ queryKey: ["userRank", username.toLowerCase()] });
+    queryClient.invalidateQueries({ queryKey: ["leaderboard"] });
   };
 
   const copyToClipboard = () => {

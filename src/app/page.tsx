@@ -17,7 +17,7 @@ export default function HomePage() {
     e.preventDefault();
     if (username.trim() && !isPending) {
       setIsPending(true);
-      router.push(`/analyze/${username.trim().toLowerCase()}`);
+      router.push(`/user/${username.trim().toLowerCase()}`);
     }
   };
 
@@ -74,7 +74,7 @@ export default function HomePage() {
               {(session?.user?.login || session?.user?.name) && (
                 <div className="flex items-center justify-center gap-6">
                   <Link
-                    href={`/analyze/${(session.user.login || session.user.name!).toLowerCase()}`}
+                    href={`/user/${(session.user.login || session.user.name!).toLowerCase()}`}
                     className="group flex items-center gap-4 text-sm tracking-widest uppercase font-bold text-gray-500 hover:text-white transition-all"
                   >
                     <img
@@ -183,7 +183,7 @@ export default function HomePage() {
                         {entry.rank.toString().padStart(2, '0')}
                       </td>
                       <td className="px-10 py-6">
-                        <Link href={`/analyze/${entry.username}`} className="flex items-center gap-4">
+                        <Link href={`/user/${entry.username}`} className="flex items-center gap-4">
                           <img src={entry.avatarUrl} alt={entry.username} className="w-8 h-8 rounded-full border border-white/10 grayscale group-hover:grayscale-0 transition-all" />
                           <span className="text-white font-medium group-hover:text-sky-400 transition-colors font-serif text-lg">
                             {entry.username}

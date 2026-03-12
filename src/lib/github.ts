@@ -9,6 +9,7 @@ interface UserAnalysisResponse {
   user: {
     name: string | null;
     avatarUrl: string;
+    url: string;
     bio: string | null;
     followers: { totalCount: number };
     following: { totalCount: number };
@@ -20,6 +21,7 @@ interface UserAnalysisResponse {
     location: string | null;
     email: string;
     twitterUsername: string | null;
+
     repositories: {
       nodes: Array<{
         name: string;
@@ -84,6 +86,7 @@ const USER_ANALYSIS_QUERY = `
     user(login: $login) {
       name
       avatarUrl
+      url
       bio
       followers { totalCount }
       following { totalCount }
@@ -223,6 +226,7 @@ export async function fetchUserAnalysis(
     user: {
       name: user.name,
       avatarUrl: user.avatarUrl,
+      url: user.url,
       bio: user.bio,
       followers: user.followers.totalCount,
       following: user.following.totalCount,

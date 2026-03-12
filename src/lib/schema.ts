@@ -14,6 +14,7 @@ export const leaderboard = pgTable("leaderboard", {
     username: text("username").primaryKey(),
     name: text("name"),
     avatarUrl: text("avatar_url"),
+    url: text("url"),
     totalScore: real("total_score"),
     company: text("company"),
     blog: text("blog"),

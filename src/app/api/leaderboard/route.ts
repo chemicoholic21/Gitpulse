@@ -5,11 +5,10 @@ import { desc } from "drizzle-orm";
 
 export async function GET(request: NextRequest) {
   try {
-    const topUsers = await db
-      .select()
-      .from(leaderboard)
-      .orderBy(desc(leaderboard.totalScore))
-      .limit(100);
+    const topUsers = await db.query.leaderboard.findMany({
+      orderBy: [desc(leaderboard.totalScore)],
+      limit: 100,
+    });
 
     const result = topUsers.map((user, index) => ({
       rank: index + 1,
@@ -17,7 +16,7 @@ export async function GET(request: NextRequest) {
     }));
 
     return NextResponse.json(result);
-  } catch (error) {
+  } catch (error: any) {
     console.error("[leaderboard]", error);
     return NextResponse.json(
       { error: "Failed to fetch leaderboard" },
