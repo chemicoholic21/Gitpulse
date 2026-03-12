@@ -5,9 +5,13 @@ import { desc } from "drizzle-orm";
 
 export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const limitParam = searchParams.get("limit");
+    const limit = limitParam ? Math.min(parseInt(limitParam), 100) : 100;
+
     const topUsers = await db.query.leaderboard.findMany({
       orderBy: [desc(leaderboard.totalScore)],
-      limit: 100,
+      limit: limit,
     });
 
     const result = topUsers.map((user, index) => ({
