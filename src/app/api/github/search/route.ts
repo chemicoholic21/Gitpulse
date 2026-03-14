@@ -7,15 +7,27 @@ import { inArray, eq } from "drizzle-orm";
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const location = searchParams.get("location");
-  const page = parseInt(searchParams.get("page") || "1");
+  let page = parseInt(searchParams.get("page") || "1");
+  const perPage = 100;
 
   if (!location) {
     return NextResponse.json({ error: "Location is required" }, { status: 400 });
   }
 
+  // GitHub Search API only allows access to the first 1000 results
+  if (page * perPage > 1000) {
+    return NextResponse.json({
+        location,
+        page,
+        totalCount: 1000,
+        results: [],
+        error: "GitHub API limit reached. Only the first 1000 results are available for live search. Try a more specific location filter."
+    });
+  }
+
   try {
     // 1. Search GitHub (Fast, no analysis yet)
-    const { users: githubUsernames, totalCount } = await searchUsersByLocation(location, page, 30);
+    const { users: githubUsernames, totalCount } = await searchUsersByLocation(location, page, perPage);
 
     // 2. Check which ones are already in our DB
     const existingAnalyses = await db

@@ -18,6 +18,7 @@ interface SearchResult {
 interface SearchResponse {
   totalCount: number;
   results: SearchResult[];
+  error?: string;
 }
 
 export default function DiscoverPage() {
@@ -29,8 +30,9 @@ export default function DiscoverPage() {
     queryKey: ["discover", location, page],
     queryFn: async () => {
       const res = await fetch(`/api/github/search?location=${encodeURIComponent(location)}&page=${page}`);
-      if (!res.ok) throw new Error("Search failed");
-      return res.json();
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Search failed");
+      return json;
     },
     enabled: !!location,
     staleTime: 60000,
@@ -96,9 +98,9 @@ export default function DiscoverPage() {
         )}
 
         {error && (
-          <div className="text-center py-10 text-red-400 bg-red-900/10 rounded-lg border border-red-900/20">
+          <div className="text-center py-10 text-red-400 bg-red-900/10 rounded-lg border border-red-900/20 px-6">
             <AlertCircle className="h-8 w-8 mx-auto mb-2" />
-            <p>Failed to load users. Please try again.</p>
+            <p>{error instanceof Error ? error.message : "Failed to load users. Please try again."}</p>
           </div>
         )}
 
@@ -172,11 +174,16 @@ export default function DiscoverPage() {
               <Button 
                 variant="outline" 
                 onClick={() => setPage((p) => p + 1)}
-                disabled={isLoading || (data.results.length < 30)}
+                disabled={isLoading || page >= 10 || (data.results.length < 100)}
               >
                 Next
               </Button>
             </div>
+            {page >= 10 && (
+              <p className="text-center text-xs text-neutral-600 mt-4 font-mono">
+                GitHub search limit reached (1,000 users). Try refining your location to discover more talent.
+              </p>
+            )}
           </div>
         )}
       </div>
