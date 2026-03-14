@@ -13,6 +13,19 @@ export async function GET(request: NextRequest) {
     const offset = (page - 1) * limit;
     const location = searchParams.get("location");
     const search = searchParams.get("search");
+    const category = searchParams.get("category");
+
+    // Map category to column
+    let scoreColumn = leaderboard.totalScore;
+    if (category) {
+      switch (category.toLowerCase()) {
+        case "ai": scoreColumn = leaderboard.aiScore; break;
+        case "backend": scoreColumn = leaderboard.backendScore; break;
+        case "frontend": scoreColumn = leaderboard.frontendScore; break;
+        case "devops": scoreColumn = leaderboard.devopsScore; break;
+        case "data": scoreColumn = leaderboard.dataScore; break;
+      }
+    }
 
     const filters = [];
     if (location) {
@@ -25,6 +38,12 @@ export async function GET(request: NextRequest) {
           ilike(leaderboard.name, `%${search}%`)
         )
       );
+    }
+    
+    // If a category is selected, we might want to only show users with score > 0 in that category
+    if (category) {
+      // @ts-ignore
+      filters.push(sql`${scoreColumn} > 0`);
     }
 
     const whereClause = filters.length > 0 ? and(...filters) : undefined;
@@ -44,7 +63,8 @@ export async function GET(request: NextRequest) {
     }
 
     const topUsers = await query
-      .orderBy(desc(leaderboard.totalScore))
+      // @ts-ignore
+      .orderBy(desc(scoreColumn))
       .limit(limit)
       .offset(offset);
 

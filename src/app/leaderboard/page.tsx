@@ -12,6 +12,7 @@ export default function LeaderboardPage() {
   const [debouncedLocation, setDebouncedLocation] = useState("");
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [category, setCategory] = useState("");
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(20);
 
@@ -31,7 +32,12 @@ export default function LeaderboardPage() {
     return () => clearTimeout(timer);
   }, [search]);
 
-  const { data, isLoading } = useLeaderboard(pageSize, debouncedLocation, pageIndex + 1, debouncedSearch);
+  const handleCategoryChange = (newCategory: string) => {
+    setCategory(newCategory);
+    setPageIndex(0);
+  };
+
+  const { data, isLoading } = useLeaderboard(pageSize, debouncedLocation, pageIndex + 1, debouncedSearch, category);
 
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-200 py-24 px-6">
@@ -70,7 +76,9 @@ export default function LeaderboardPage() {
               onPageChange={setPageIndex}
               onPageSizeChange={setPageSize}
               onSearchChange={setSearch}
+              onCategoryChange={handleCategoryChange}
               search={search}
+              category={category}
               isLoading={isLoading}
             />
           )}

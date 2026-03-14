@@ -3,18 +3,15 @@
 import * as React from "react";
 import {
   ColumnDef,
-  ColumnFiltersState,
   SortingState,
   VisibilityState,
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
   FilterFn,
 } from "@tanstack/react-table";
-import { ChevronDown, ChevronRight, Mail, MapPin, Link as LinkIcon, Twitter, Building2, Calendar, Search, ArrowUpDown, Github } from "lucide-react";
+import { ChevronDown, ChevronRight, Mail, MapPin, Link as LinkIcon, Twitter, Building2, Calendar, Search, ArrowUpDown, Github, Filter } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,121 +28,13 @@ import { Badge } from "@/components/ui/badge";
 import { LeaderboardEntry } from "@/lib/scoring";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-
-const globalFilterFn: FilterFn<any> = (row, columnId, value) => {
-    const username = (row.getValue("username") as string || "").toLowerCase();
-    const name = (row.original.name as string || "").toLowerCase();
-    const company = (row.original.company as string || "").toLowerCase();
-    const filterValue = value.toLowerCase();
-    
-    return username.includes(filterValue) || 
-           name.includes(filterValue) || 
-           company.includes(filterValue);
-};
-
-export const columns: ColumnDef<LeaderboardEntry>[] = [
-  {
-    accessorKey: "rank",
-    header: "Rank",
-    cell: ({ row }) => <div className="font-mono font-medium text-neutral-500">#{row.getValue("rank")}</div>,
-  },
-  {
-    accessorKey: "username",
-    header: "Developer",
-    cell: ({ row }) => {
-      const entry = row.original;
-      return (
-        <div className="flex items-center gap-3">
-          <Avatar className="h-10 w-10 border border-neutral-800">
-            <AvatarImage src={entry.avatarUrl} alt={entry.username} />
-            <AvatarFallback>{entry.username.substring(0, 2).toUpperCase()}</AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col text-left">
-            <span className="font-semibold text-neutral-200 leading-none">{entry.name || entry.username}</span>
-            <span className="text-xs text-neutral-500 font-mono">@{entry.username}</span>
-          </div>
-        </div>
-      );
-    },
-  },
-  {
-    accessorKey: "totalScore",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="hover:bg-neutral-900 -ml-4 font-mono text-xs uppercase tracking-wider"
-        >
-          Score
-          <ArrowUpDown className="ml-2 h-3 w-3" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const score = parseFloat(row.getValue("totalScore"));
-      return <div className="font-mono font-bold text-green-400">{score.toFixed(1)}</div>;
-    },
-  },
-  {
-    accessorKey: "company",
-    header: "Company",
-    cell: ({ row }) => <div className="text-neutral-400 truncate max-w-[150px]">{row.getValue("company") || "—"}</div>,
-  },
-  {
-    accessorKey: "location",
-    header: "Location",
-    cell: ({ row }) => <div className="text-neutral-400 truncate max-w-[150px]">{row.getValue("location") || "—"}</div>,
-  },
-  {
-    accessorKey: "hireable",
-    header: "Hireable",
-    cell: ({ row }) => {
-      const isHireable = row.getValue("hireable");
-      return isHireable ? (
-        <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/20 px-2 py-0 text-[10px] uppercase font-bold tracking-tighter">
-          Hireable
-        </Badge>
-      ) : null;
-    },
-  },
-  {
-    accessorKey: "updatedAt",
-    header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="hover:bg-neutral-900 -ml-4 font-mono text-xs uppercase tracking-wider"
-          >
-            Updated
-            <ArrowUpDown className="ml-2 h-3 w-3" />
-          </Button>
-        );
-      },
-    cell: ({ row }) => {
-      const date = new Date(row.getValue("updatedAt"));
-      return <div className="text-xs text-neutral-500 font-mono">{date.toLocaleDateString()}</div>;
-    },
-  },
-  {
-    id: "expander",
-    header: () => null,
-    cell: ({ row }) => (
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-8 w-8 p-0 hover:bg-neutral-800 text-neutral-500"
-      >
-        {row.getIsExpanded() ? (
-          <ChevronDown className="h-4 w-4" />
-        ) : (
-          <ChevronRight className="h-4 w-4" />
-        )}
-      </Button>
-    ),
-  },
-];
+import { SkillBreakdown } from "@/components/SkillBreakdown";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface LeaderboardTableProps {
   data: LeaderboardEntry[];
@@ -155,7 +44,9 @@ interface LeaderboardTableProps {
   onPageChange: (pageIndex: number) => void;
   onPageSizeChange: (pageSize: number) => void;
   onSearchChange: (search: string) => void;
+  onCategoryChange: (category: string) => void;
   search: string;
+  category: string;
   isLoading?: boolean;
 }
 
@@ -167,16 +58,124 @@ export function LeaderboardTable({
   onPageChange,
   onPageSizeChange,
   onSearchChange,
+  onCategoryChange,
   search,
+  category,
   isLoading
 }: LeaderboardTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([{ id: "totalScore", desc: true }]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [expanded, setExpanded] = React.useState({});
 
+  const tableColumns = React.useMemo<ColumnDef<LeaderboardEntry>[]>(() => [
+    {
+      accessorKey: "rank",
+      header: "Rank",
+      cell: ({ row }) => <div className="font-mono font-medium text-neutral-500">#{row.getValue("rank")}</div>,
+    },
+    {
+      accessorKey: "username",
+      header: "Developer",
+      cell: ({ row }) => {
+        const entry = row.original;
+        return (
+          <div className="flex items-center gap-3">
+            <Avatar className="h-10 w-10 border border-neutral-800">
+              <AvatarImage src={entry.avatarUrl} alt={entry.username} />
+              <AvatarFallback>{entry.username.substring(0, 2).toUpperCase()}</AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col text-left">
+              <span className="font-semibold text-neutral-200 leading-none">{entry.name || entry.username}</span>
+              <span className="text-xs text-neutral-500 font-mono">@{entry.username}</span>
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "totalScore",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="hover:bg-neutral-900 -ml-4 font-mono text-xs uppercase tracking-wider"
+          >
+            {category ? `${category} Score` : "Score"}
+            <ArrowUpDown className="ml-2 h-3 w-3" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        const score = category 
+          ? (row.original as any)[`${category.toLowerCase()}Score`] 
+          : row.original.totalScore;
+        return <div className="font-mono font-bold text-green-400">{(score || 0).toFixed(1)}</div>;
+      },
+    },
+    {
+      accessorKey: "company",
+      header: "Company",
+      cell: ({ row }) => <div className="text-neutral-400 truncate max-w-[150px]">{row.getValue("company") || "—"}</div>,
+    },
+    {
+      accessorKey: "location",
+      header: "Location",
+      cell: ({ row }) => <div className="text-neutral-400 truncate max-w-[150px]">{row.getValue("location") || "—"}</div>,
+    },
+    {
+      accessorKey: "hireable",
+      header: "Hireable",
+      cell: ({ row }) => {
+        const isHireable = row.getValue("hireable");
+        return isHireable ? (
+          <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/20 px-2 py-0 text-[10px] uppercase font-bold tracking-tighter">
+            Hireable
+          </Badge>
+        ) : null;
+      },
+    },
+    {
+      accessorKey: "updatedAt",
+      header: ({ column }) => {
+          return (
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+              className="hover:bg-neutral-900 -ml-4 font-mono text-xs uppercase tracking-wider"
+            >
+              Updated
+              <ArrowUpDown className="ml-2 h-3 w-3" />
+            </Button>
+          );
+        },
+      cell: ({ row }) => {
+        const date = new Date(row.getValue("updatedAt"));
+        return <div className="text-xs text-neutral-500 font-mono">{date.toLocaleDateString()}</div>;
+      },
+    },
+    {
+      id: "expander",
+      header: () => null,
+      cell: ({ row }) => (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 w-8 p-0 hover:bg-neutral-800 text-neutral-500"
+        >
+          {row.getIsExpanded() ? (
+            <ChevronDown className="h-4 w-4" />
+          ) : (
+            <ChevronRight className="h-4 w-4" />
+          )}
+        </Button>
+      ),
+    },
+  ], [category]);
+
   const table = useReactTable({
     data,
-    columns,
+    columns: tableColumns,
     pageCount: Math.ceil(totalCount / pageSize),
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
@@ -199,15 +198,41 @@ export function LeaderboardTable({
 
   return (
     <div className="w-full space-y-4">
-      <div className="flex items-center relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
-        <Input
-          placeholder="Search by username or name..."
-          value={search}
-          onChange={(event) => onSearchChange(event.target.value)}
-          className="max-w-md bg-neutral-950 border-neutral-800 pl-10 focus:ring-green-400 focus:border-green-400/50 transition-all"
-        />
+      <div className="flex flex-col md:flex-row md:items-center gap-4">
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
+          <Input
+            placeholder="Search by username or name..."
+            value={search}
+            onChange={(event) => onSearchChange(event.target.value)}
+            className="w-full bg-neutral-950 border-neutral-800 pl-10 focus:ring-green-400 focus:border-green-400/50 transition-all"
+          />
+        </div>
+        
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="bg-neutral-950 border-neutral-800 text-neutral-400 hover:text-white min-w-[160px] justify-between">
+              <span className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest">
+                <Filter className="h-3.5 w-3.5" />
+                {category ? category : "ALL CATEGORIES"}
+              </span>
+              <ChevronDown className="h-4 w-4 opacity-50" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="bg-neutral-900 border-neutral-800 text-neutral-200 min-w-[160px]">
+            {["", "ai", "backend", "frontend", "devops", "data"].map((c) => (
+              <DropdownMenuItem 
+                key={c} 
+                className="capitalize focus:bg-neutral-800 cursor-pointer text-xs font-mono"
+                onClick={() => onCategoryChange(c)}
+              >
+                {c || "All Categories"}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
+
       <div className="rounded-md border border-neutral-800 bg-neutral-950 overflow-hidden relative">
         {isLoading && (
           <div className="absolute inset-0 bg-neutral-950/50 backdrop-blur-sm z-10 flex items-center justify-center">
@@ -253,9 +278,9 @@ export function LeaderboardTable({
                   </TableRow>
                   {row.getIsExpanded() && (
                     <TableRow className="bg-neutral-900/20 border-neutral-800 hover:bg-neutral-900/20">
-                      <TableCell colSpan={columns.length} className="p-0 border-b border-neutral-800">
-                        <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-12 animate-in fade-in slide-in-from-top-2 duration-300">
-                           <div className="space-y-6">
+                      <TableCell colSpan={tableColumns.length} className="p-0 border-b border-neutral-800">
+                        <div className="p-8 grid grid-cols-1 lg:grid-cols-3 gap-12 animate-in fade-in slide-in-from-top-2 duration-300">
+                           <div className="lg:col-span-2 space-y-6">
                               <div className="flex items-start gap-5">
                                 <Avatar className="h-20 w-20 border-2 border-neutral-800 shadow-2xl">
                                   <AvatarImage src={row.original.avatarUrl} />
@@ -330,18 +355,8 @@ export function LeaderboardTable({
                                   </div>
                                 )}
                               </div>
-                           </div>
-                           
-                           <div className="flex flex-col justify-center items-center md:items-end gap-8 border-l border-neutral-800 md:pl-12">
-                             <div className="text-center md:text-right">
-                               <p className="text-xs text-neutral-500 uppercase font-mono tracking-widest mb-2">Contribution Score</p>
-                               <div className="flex items-baseline gap-1 md:justify-end">
-                                 <p className="text-7xl font-mono font-black text-white tracking-tighter tabular-nums">{row.original.totalScore.toFixed(0)}</p>
-                                 <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-                               </div>
-                             </div>
-                             
-                             <div className="flex flex-col sm:flex-row gap-3 w-full max-w-xs md:max-w-none justify-end">
+                              
+                              <div className="flex flex-col sm:flex-row gap-3 w-full max-w-xs md:max-w-none pt-4">
                                 <Link href={`/user/${row.original.username}`} className="flex-1 md:flex-none" onClick={(e) => e.stopPropagation()}>
                                     <Button className="w-full bg-white text-black hover:bg-neutral-200 font-bold px-8 transition-all">
                                       Detailed Analysis
@@ -359,6 +374,27 @@ export function LeaderboardTable({
                                 </a>
                              </div>
                            </div>
+                           
+                           <div className="flex flex-col gap-8 border-l border-neutral-800 pl-12">
+                             <div>
+                               <p className="text-xs text-neutral-500 uppercase font-mono tracking-widest mb-2">Contribution Score</p>
+                               <div className="flex items-baseline gap-1">
+                                 <p className="text-7xl font-mono font-black text-white tracking-tighter tabular-nums">{row.original.totalScore.toFixed(0)}</p>
+                                 <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+                               </div>
+                             </div>
+                             
+                             <SkillBreakdown 
+                               scores={{
+                                 total: row.original.totalScore,
+                                 ai: row.original.aiScore || 0,
+                                 backend: row.original.backendScore || 0,
+                                 frontend: row.original.frontendScore || 0,
+                                 devops: row.original.devopsScore || 0,
+                                 data: row.original.dataScore || 0,
+                               }}
+                             />
+                           </div>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -367,7 +403,7 @@ export function LeaderboardTable({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-32 text-center text-neutral-500 font-mono">
+                <TableCell colSpan={tableColumns.length} className="h-32 text-center text-neutral-500 font-mono">
                   No developers found matching your criteria.
                 </TableCell>
               </TableRow>

@@ -15,6 +15,7 @@ import {
 } from "recharts";
 import Link from "next/link";
 import ProfileSkeleton from "@/components/skeletons/ProfileSkeleton";
+import { SkillBreakdown } from "@/components/SkillBreakdown";
 
 const EXPERIENCE_COLORS = {
   Newcomer: "text-gray-500 border-white/5 bg-white/5",
@@ -105,7 +106,7 @@ export default function UserProfile({ username }: { username: string }) {
               <h1 className="editorial-heading text-5xl md:text-7xl">{profile.user.name || username}</h1>
               <span
                 className={`px-6 py-2 rounded-full border text-[10px] font-bold uppercase tracking-[0.3em] ${
-                  EXPERIENCE_COLORS[profile.experienceLevel]
+                  EXPERIENCE_COLORS[profile.experienceLevel as keyof typeof EXPERIENCE_COLORS]
                 }`}
               >
                 {profile.experienceLevel}
@@ -145,10 +146,23 @@ export default function UserProfile({ username }: { username: string }) {
               {profile.totalScore.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
             </div>
             {rankData && (
-              <div className="text-sky-400 font-mono text-xs tracking-widest uppercase font-bold">
+              <div className="text-sky-400 font-mono text-xs tracking-widest uppercase font-bold mb-12">
                 Global Protocol Rank #{rankData.rank.toString().padStart(4, '0')}
               </div>
             )}
+
+            <div className="w-full max-w-xs md:ml-auto">
+              <SkillBreakdown 
+                scores={{
+                  total: profile.totalScore,
+                  ai: profile.aiScore || 0,
+                  backend: profile.backendScore || 0,
+                  frontend: profile.frontendScore || 0,
+                  devops: profile.devopsScore || 0,
+                  data: profile.dataScore || 0,
+                }}
+              />
+            </div>
           </div>
         </header>
 

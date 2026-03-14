@@ -39,6 +39,12 @@ interface UserAnalysisResponse extends RateLimitFragment {
         pushedAt: string | null;
         isFork: boolean;
         pullRequests: { totalCount: number };
+        repositoryTopics: {
+          nodes: Array<{ topic: { name: string } }>;
+        };
+        languages: {
+          nodes: Array<{ name: string }>;
+        };
       }>;
     };
     repositoriesContributedTo: {
@@ -50,6 +56,12 @@ interface UserAnalysisResponse extends RateLimitFragment {
         pushedAt: string | null;
         isFork: boolean;
         pullRequests: { totalCount: number };
+        repositoryTopics: {
+          nodes: Array<{ topic: { name: string } }>;
+        };
+        languages: {
+          nodes: Array<{ name: string }>;
+        };
       }>;
     };
   } | null;
@@ -116,6 +128,18 @@ const USER_ANALYSIS_QUERY = `
           pullRequests(states: [MERGED]) {
             totalCount
           }
+          repositoryTopics(first: 10) {
+            nodes {
+              topic {
+                name
+              }
+            }
+          }
+          languages(first: 10) {
+            nodes {
+              name
+            }
+          }
         }
       }
       repositoriesContributedTo(
@@ -132,6 +156,18 @@ const USER_ANALYSIS_QUERY = `
           isFork
           pullRequests(states: [MERGED]) {
             totalCount
+          }
+          repositoryTopics(first: 10) {
+            nodes {
+              topic {
+                name
+              }
+            }
+          }
+          languages(first: 10) {
+            nodes {
+              name
+            }
           }
         }
       }
@@ -199,6 +235,8 @@ export async function fetchUserAnalysis(
         isFork: node.isFork,
         mergedPrCount: node.pullRequests.totalCount,
         mergedPrsByUserCount: 0,
+        topics: node.repositoryTopics.nodes.map(n => n.topic.name),
+        languages: node.languages.nodes.map(n => n.name),
       });
     }
   }

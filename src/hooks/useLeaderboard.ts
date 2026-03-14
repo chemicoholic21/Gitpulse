@@ -8,15 +8,16 @@ export interface LeaderboardResponse {
   limit: number;
 }
 
-export function useLeaderboard(limit?: number, location?: string, page?: number, search?: string) {
+export function useLeaderboard(limit?: number, location?: string, page?: number, search?: string, category?: string) {
   return useQuery({
-    queryKey: ["leaderboard", limit, location, page, search],
+    queryKey: ["leaderboard", limit, location, page, search, category],
     queryFn: async (): Promise<LeaderboardResponse> => {
       const params = new URLSearchParams();
       if (limit) params.set("limit", limit.toString());
       if (location) params.set("location", location);
       if (page) params.set("page", page.toString());
       if (search) params.set("search", search);
+      if (category) params.set("category", category);
       
       const url = `/api/leaderboard?${params.toString()}`;
       const res = await fetch(url);

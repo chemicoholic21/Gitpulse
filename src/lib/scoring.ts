@@ -1,3 +1,5 @@
+import { CATEGORY_MAP, LANGUAGE_HINTS } from "./categoryMap";
+
 export interface RawGitHubData {
     user: {
         name: string | null;
@@ -24,6 +26,8 @@ export interface RawGitHubData {
         isFork: boolean;
         mergedPrCount: number;
         mergedPrsByUserCount: number;
+        topics: string[];
+        languages: string[];
     }>;
 }
 
@@ -47,6 +51,11 @@ export interface TopRepositorySummary {
 export interface ScoredProfile {
     user: RawGitHubData["user"];
     totalScore: number;
+    aiScore: number;
+    backendScore: number;
+    frontendScore: number;
+    devopsScore: number;
+    dataScore: number;
     topRepositories: TopRepositorySummary[];
     languageBreakdown: Record<string, number>;
     experienceLevel: ExperienceLevel;
@@ -76,6 +85,11 @@ export interface LeaderboardEntry {
     avatarUrl: string;
     url: string | null;
     totalScore: number;
+    aiScore: number;
+    backendScore: number;
+    frontendScore: number;
+    devopsScore: number;
+    dataScore: number;
     company: string | null;
     blog: string | null;
     location: string | null;
@@ -90,6 +104,11 @@ export interface LeaderboardEntry {
 export function computeScore(raw: RawGitHubData): ScoredProfile {
     const scoredRepos: TopRepositorySummary[] = [];
     let totalScore = 0;
+    let aiScore = 0;
+    let backendScore = 0;
+    let frontendScore = 0;
+    let devopsScore = 0;
+    let dataScore = 0;
 
     for (const repo of raw.repos) {
         const stars = repo.stargazerCount ?? 0;
@@ -100,6 +119,34 @@ export function computeScore(raw: RawGitHubData): ScoredProfile {
         if (score <= 0) continue;
 
         totalScore += score;
+
+        // Skill Categorization
+        const repoCategories = new Set<keyof typeof CATEGORY_MAP>();
+        
+        // 1. Check topics
+        for (const topic of repo.topics) {
+            const lowerTopic = topic.toLowerCase();
+            for (const [category, keywords] of Object.entries(CATEGORY_MAP)) {
+                if (keywords.includes(lowerTopic)) {
+                    repoCategories.add(category as keyof typeof CATEGORY_MAP);
+                }
+            }
+        }
+
+        // 2. Check languages if no categories found via topics
+        if (repoCategories.size === 0 && repo.primaryLanguage) {
+            const hint = LANGUAGE_HINTS[repo.primaryLanguage];
+            if (hint) {
+                repoCategories.add(hint);
+            }
+        }
+
+        // Apply score to categories
+        if (repoCategories.has("AI")) aiScore += score;
+        if (repoCategories.has("Backend")) backendScore += score;
+        if (repoCategories.has("Frontend")) frontendScore += score;
+        if (repoCategories.has("DevOps")) devopsScore += score;
+        if (repoCategories.has("Data")) dataScore += score;
 
         scoredRepos.push({
             name: repo.name,
@@ -129,6 +176,11 @@ export function computeScore(raw: RawGitHubData): ScoredProfile {
     return {
         user: raw.user,
         totalScore,
+        aiScore,
+        backendScore,
+        frontendScore,
+        devopsScore,
+        dataScore,
         topRepositories,
         languageBreakdown,
         experienceLevel,
