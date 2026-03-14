@@ -2,6 +2,7 @@ import { CATEGORY_MAP, LANGUAGE_HINTS } from "./categoryMap";
 
 export interface RawGitHubData {
     user: {
+        login: string;
         name: string | null;
         avatarUrl: string;
         url: string;
@@ -56,6 +57,7 @@ export interface ScoredProfile {
     frontendScore: number;
     devopsScore: number;
     dataScore: number;
+    contributionCount: number;
     topRepositories: TopRepositorySummary[];
     languageBreakdown: Record<string, number>;
     experienceLevel: ExperienceLevel;
@@ -109,11 +111,14 @@ export function computeScore(raw: RawGitHubData): ScoredProfile {
     let frontendScore = 0;
     let devopsScore = 0;
     let dataScore = 0;
+    let contributionCount = 0;
 
     for (const repo of raw.repos) {
         const stars = repo.stargazerCount ?? 0;
         const userPRs = repo.mergedPrsByUserCount ?? 0;
         const totalPRs = repo.mergedPrCount ?? 0;
+
+        contributionCount += userPRs;
 
         const score = scoreRepo(stars, userPRs, totalPRs);
         if (score <= 0) continue;
@@ -181,6 +186,7 @@ export function computeScore(raw: RawGitHubData): ScoredProfile {
         frontendScore,
         devopsScore,
         dataScore,
+        contributionCount,
         topRepositories,
         languageBreakdown,
         experienceLevel,

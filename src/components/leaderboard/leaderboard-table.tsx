@@ -210,7 +210,7 @@ export function LeaderboardTable({
         </div>
         
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger>
             <Button variant="outline" className="bg-neutral-950 border-neutral-800 text-neutral-400 hover:text-white min-w-[160px] justify-between">
               <span className="flex items-center gap-2 text-xs font-mono uppercase tracking-widest">
                 <Filter className="h-3.5 w-3.5" />

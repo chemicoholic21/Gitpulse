@@ -15,6 +15,7 @@ interface RateLimitFragment {
 
 interface UserAnalysisResponse extends RateLimitFragment {
   user: {
+    login: string;
     name: string | null;
     avatarUrl: string;
     url: string;
@@ -99,6 +100,7 @@ const USER_ANALYSIS_QUERY = `
   query UserAnalysis($login: String!) {
     rateLimit { remaining cost }
     user(login: $login) {
+      login
       name
       avatarUrl
       url
@@ -280,6 +282,7 @@ export async function fetchUserAnalysis(
 
   return {
     user: {
+      login: user.login,
       name: user.name,
       avatarUrl: user.avatarUrl,
       url: user.url,

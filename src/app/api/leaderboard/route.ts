@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get("category");
 
     // Map category to column
-    let scoreColumn = leaderboard.totalScore;
+    let scoreColumn: any = leaderboard.totalScore;
     if (category) {
       switch (category.toLowerCase()) {
         case "ai": scoreColumn = leaderboard.aiScore; break;
@@ -42,7 +42,6 @@ export async function GET(request: NextRequest) {
     
     // If a category is selected, we might want to only show users with score > 0 in that category
     if (category) {
-      // @ts-ignore
       filters.push(sql`${scoreColumn} > 0`);
     }
 
@@ -63,7 +62,6 @@ export async function GET(request: NextRequest) {
     }
 
     const topUsers = await query
-      // @ts-ignore
       .orderBy(desc(scoreColumn))
       .limit(limit)
       .offset(offset);
