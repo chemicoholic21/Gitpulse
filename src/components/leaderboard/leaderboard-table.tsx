@@ -367,7 +367,7 @@ export function LeaderboardTable({
                                    className="flex-1 md:flex-none"
                                    onClick={(e) => e.stopPropagation()}
                                 >
-                                    <Button variant="outline" className="w-full border-neutral-700 hover:bg-neutral-800 font-bold px-8 flex items-center gap-2">
+                                    <Button variant="outline" className="w-full border-neutral-700 bg-white text-black hover:bg-neutral-200 font-bold px-8 flex items-center gap-2 transition-all">
                                       <Github className="h-4 w-4" />
                                       View GitHub Profile
                                     </Button>
