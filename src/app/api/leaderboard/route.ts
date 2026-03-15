@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { leaderboard } from "@/lib/schema";
-import { desc, ilike, count, sql, or, and } from "drizzle-orm";
+import { desc, ilike, count, sql, or, and, eq } from "drizzle-orm";
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,6 +14,9 @@ export async function GET(request: NextRequest) {
     const location = searchParams.get("location");
     const search = searchParams.get("search");
     const category = searchParams.get("category");
+    const hireable = searchParams.get("hireable") === "true";
+    const sortBy = searchParams.get("sortBy") || "totalScore";
+    const sortOrder = searchParams.get("sortOrder") || "desc";
 
     // Map category to column
     let scoreColumn: any = leaderboard.totalScore;
@@ -39,6 +42,9 @@ export async function GET(request: NextRequest) {
         )
       );
     }
+    if (hireable) {
+      filters.push(eq(leaderboard.hireable, true));
+    }
     
     // If a category is selected, we might want to only show users with score > 0 in that category
     if (category) {
@@ -46,6 +52,22 @@ export async function GET(request: NextRequest) {
     }
 
     const whereClause = filters.length > 0 ? and(...filters) : undefined;
+
+    // Determine sort column and direction
+    let orderByColumn: any;
+    if (sortBy === "totalScore") {
+      orderByColumn = scoreColumn;
+    } else if (sortBy === "updatedAt") {
+      orderByColumn = leaderboard.updatedAt;
+    } else if (sortBy === "username") {
+      orderByColumn = leaderboard.username;
+    } else if (sortBy === "hireable") {
+      orderByColumn = leaderboard.hireable;
+    } else {
+      orderByColumn = scoreColumn;
+    }
+
+    const sortFn = sortOrder === "asc" ? (c: any) => c : (c: any) => desc(c);
 
     // Get total count for pagination
     let countQuery = db.select({ value: count() }).from(leaderboard);
@@ -62,7 +84,7 @@ export async function GET(request: NextRequest) {
     }
 
     const topUsers = await query
-      .orderBy(desc(scoreColumn))
+      .orderBy(sortFn(orderByColumn))
       .limit(limit)
       .offset(offset);
 
