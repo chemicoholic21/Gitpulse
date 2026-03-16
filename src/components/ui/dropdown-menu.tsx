@@ -14,8 +14,25 @@ function DropdownMenuPortal({ ...props }: MenuPrimitive.Portal.Props) {
   return <MenuPrimitive.Portal data-slot="dropdown-menu-portal" {...props} />
 }
 
-function DropdownMenuTrigger({ ...props }: MenuPrimitive.Trigger.Props) {
-  return <MenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />
+function DropdownMenuTrigger({
+  className,
+  asChild,
+  children,
+  ...props
+}: MenuPrimitive.Trigger.Props & {
+  className?: string
+  asChild?: boolean
+}) {
+  return (
+    <MenuPrimitive.Trigger
+      data-slot="dropdown-menu-trigger"
+      className={cn(className)}
+      render={asChild ? (children as React.ReactElement) : undefined}
+      {...props}
+    >
+      {asChild ? undefined : children}
+    </MenuPrimitive.Trigger>
+  )
 }
 
 function DropdownMenuContent({
