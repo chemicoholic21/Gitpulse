@@ -33,7 +33,7 @@ A PR merged into a 40,000-star repo counts for more than ten merged into project
 
 ## Stack
 
-GitPulse is built on Next.js 14/15 (App Router) with a dark terminal aesthetic.
+GitPulse is built on Next.js 16 (App Router) with a dark terminal aesthetic.
 
 - **Database** — Neon (serverless Postgres) via Drizzle ORM
 - **Cache & rate limiting** — Upstash Redis
@@ -45,7 +45,7 @@ GitPulse is built on Next.js 14/15 (App Router) with a dark terminal aesthetic.
 
 ## Running Locally
 
-**Prerequisites:** Node.js 18+, a GitHub account, a [Neon](https://neon.tech) project, and an [Upstash](https://upstash.com) Redis database.
+**Prerequisites:** Node.js 20+, a GitHub account, a [Neon](https://neon.tech) project, and an [Upstash](https://upstash.com) Redis database.
 
 **1. Clone and install**
 
