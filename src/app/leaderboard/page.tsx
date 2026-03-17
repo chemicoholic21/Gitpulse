@@ -17,6 +17,8 @@ export default function LeaderboardPage() {
   const [hasLinkedIn, setHasLinkedIn] = useState(false);
   const [hasX, setHasX] = useState(false);
   const [hasEmail, setHasEmail] = useState(false);
+  const [skill, setSkill] = useState("");
+  const [debouncedSkill, setDebouncedSkill] = useState("");
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(20);
 
@@ -31,10 +33,18 @@ export default function LeaderboardPage() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
-      setPageIndex(0); // Reset to first page when search changes
+      setPageIndex(0);
     }, 500);
     return () => clearTimeout(timer);
   }, [search]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSkill(skill);
+      setPageIndex(0);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [skill]);
 
   const handleCategoryChange = (newCategory: string) => {
     setCategory(newCategory);
@@ -59,6 +69,11 @@ export default function LeaderboardPage() {
     setPageIndex(0);
   };
 
+  const handleSkillChange = (newSkill: string) => {
+    setSkill(newSkill);
+    setPageIndex(0);
+  };
+
   const { data, isLoading } = useLeaderboard(
     pageSize, 
     debouncedLocation, 
@@ -70,7 +85,8 @@ export default function LeaderboardPage() {
     hireable,
     hasLinkedIn,
     hasX,
-    hasEmail
+    hasEmail,
+    debouncedSkill,
   );
 
   return (
@@ -102,6 +118,7 @@ export default function LeaderboardPage() {
               onSortChange={handleSortChange}
               onHireableChange={handleHireableChange}
               onContactFilterChange={handleContactFilterChange}
+              onSkillChange={handleSkillChange}
               search={search}
               location={location}
               category={category}
@@ -111,6 +128,7 @@ export default function LeaderboardPage() {
               hasLinkedIn={hasLinkedIn}
               hasX={hasX}
               hasEmail={hasEmail}
+              skill={skill}
               isLoading={isLoading}
             />
           )}

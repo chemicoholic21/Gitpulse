@@ -46,6 +46,7 @@ interface LeaderboardTableProps {
   onSortChange: (sortBy: string, sortOrder: string) => void;
   onHireableChange: (hireable: boolean) => void;
   onContactFilterChange: (type: "hasLinkedIn" | "hasX" | "hasEmail", value: boolean) => void;
+  onSkillChange: (skill: string) => void;
   search: string;
   location: string;
   category: string;
@@ -55,6 +56,7 @@ interface LeaderboardTableProps {
   hasLinkedIn: boolean;
   hasX: boolean;
   hasEmail: boolean;
+  skill: string;
   isLoading?: boolean;
 }
 
@@ -71,6 +73,7 @@ export function LeaderboardTable({
   onSortChange,
   onHireableChange,
   onContactFilterChange,
+  onSkillChange,
   search,
   location,
   category,
@@ -80,6 +83,7 @@ export function LeaderboardTable({
   hasLinkedIn,
   hasX,
   hasEmail,
+  skill,
   isLoading
 }: LeaderboardTableProps) {
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
@@ -269,6 +273,16 @@ export function LeaderboardTable({
               placeholder="Filter by city/country..."
               value={location}
               onChange={(event) => onLocationChange(event.target.value)}
+              className="w-full bg-neutral-950 border-neutral-800 pl-10 focus:ring-green-400 focus:border-green-400/50 transition-all text-sm"
+            />
+          </div>
+
+          <div className="relative md:col-span-2">
+            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
+            <Input
+              placeholder="Filter by expertise (e.g. react, python, docker)..."
+              value={skill}
+              onChange={(event) => onSkillChange(event.target.value)}
               className="w-full bg-neutral-950 border-neutral-800 pl-10 focus:ring-green-400 focus:border-green-400/50 transition-all text-sm"
             />
           </div>

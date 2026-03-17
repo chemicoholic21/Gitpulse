@@ -18,6 +18,7 @@ export async function GET(request: NextRequest) {
     const hasLinkedIn = searchParams.get("hasLinkedIn") === "true";
     const hasX = searchParams.get("hasX") === "true";
     const hasEmail = searchParams.get("hasEmail") === "true";
+    const skill = searchParams.get("skill");
     const sortBy = searchParams.get("sortBy") || "totalScore";
     const sortOrder = searchParams.get("sortOrder") || "desc";
 
@@ -56,6 +57,11 @@ export async function GET(request: NextRequest) {
 
     if (contactFilters.length > 0) {
       filters.push(or(...contactFilters));
+    }
+
+    // Filter by skill (case-insensitive substring match in JSON array)
+    if (skill) {
+      filters.push(sql`${leaderboard.uniqueSkillsJson} ILIKE ${'%' + skill + '%'}`);
     }
     
     // If a category is selected, we might want to only show users with score > 0 in that category

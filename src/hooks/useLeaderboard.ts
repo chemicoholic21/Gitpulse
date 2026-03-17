@@ -19,10 +19,11 @@ export function useLeaderboard(
   hireable?: boolean,
   hasLinkedIn?: boolean,
   hasX?: boolean,
-  hasEmail?: boolean
+  hasEmail?: boolean,
+  skill?: string,
 ) {
   return useQuery({
-    queryKey: ["leaderboard", limit, location, page, search, category, sortBy, sortOrder, hireable, hasLinkedIn, hasX, hasEmail],
+    queryKey: ["leaderboard", limit, location, page, search, category, sortBy, sortOrder, hireable, hasLinkedIn, hasX, hasEmail, skill],
     queryFn: async (): Promise<LeaderboardResponse> => {
       const params = new URLSearchParams();
       if (limit) params.set("limit", limit.toString());
@@ -36,6 +37,7 @@ export function useLeaderboard(
       if (hasLinkedIn === true) params.set("hasLinkedIn", "true");
       if (hasX === true) params.set("hasX", "true");
       if (hasEmail === true) params.set("hasEmail", "true");
+      if (skill) params.set("skill", skill);
       
       const url = `/api/leaderboard?${params.toString()}`;
       const res = await fetch(url);
