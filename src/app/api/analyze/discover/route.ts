@@ -1,16 +1,16 @@
-import { NextRequest, NextResponse } from "next/server";
-import { searchUsersByLocation } from "@/lib/github-rest";
-import { fetchUserAnalysis } from "@/lib/github";
-import { computeScore } from "@/lib/scoring";
-import { db } from "@/lib/db";
-import { analyses, leaderboard } from "@/lib/schema";
-import { getCachedAnalysis, setCachedAnalysis, setRawAnalysis } from "@/lib/redis";
+import { NextRequest, NextResponse } from"next/server";
+import { searchUsersByLocation } from"@/lib/github-rest";
+import { fetchUserAnalysis } from"@/lib/github";
+import { computeScore } from"@/lib/scoring";
+import { db } from"@/lib/db";
+import { analyses, leaderboard } from"@/lib/schema";
+import { getCachedAnalysis, setCachedAnalysis, setRawAnalysis } from"@/lib/redis";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const location = searchParams.get("location") || "San Francisco";
-  const page = parseInt(searchParams.get("page") || "1");
-  const limit = parseInt(searchParams.get("limit") || "10"); // small limit to avoid timeout
+  const location = searchParams.get("location") ||"San Francisco";
+  const page = parseInt(searchParams.get("page") ||"1");
+  const limit = parseInt(searchParams.get("limit") ||"10"); // small limit to avoid timeout
 
   try {
     const { users, totalCount } = await searchUsersByLocation(location, page, limit);
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
       // 1. Check if already analyzed (6h cache)
       const cached = await getCachedAnalysis(username);
       if (cached) {
-        results.push({ username, status: "cached", score: cached.totalScore });
+        results.push({ username, status:"cached", score: cached.totalScore });
         continue;
       }
 
@@ -124,10 +124,10 @@ export async function GET(request: NextRequest) {
           },
         });
 
-        results.push({ username, status: "analyzed", score: profile.totalScore });
+        results.push({ username, status:"analyzed", score: profile.totalScore });
       } catch (err: any) {
         console.error(`Failed to analyze ${username}:`, err.message);
-        results.push({ username, status: "failed", error: err.message });
+        results.push({ username, status:"failed", error: err.message });
       }
     }
 
@@ -140,6 +140,6 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: any) {
     console.error("[discover]", error);
-    return NextResponse.json({ error: "Discovery failed", details: error.message }, { status: 500 });
+    return NextResponse.json({ error:"Discovery failed", details: error.message }, { status: 500 });
   }
 }

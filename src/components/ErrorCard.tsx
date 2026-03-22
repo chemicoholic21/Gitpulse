@@ -1,7 +1,7 @@
 "use client";
 
-import { signIn } from "next-auth/react";
-import Link from "next/link";
+import { signIn } from"next-auth/react";
+import Link from"next/link";
 
 interface ErrorCardProps {
   message: string;
@@ -34,7 +34,7 @@ export default function ErrorCard({ message, action }: ErrorCardProps) {
       </div>
 
       <h2 className="text-xl font-bold text-white mb-3">
-        {isRateLimit ? "Limit Reached" : isNotFound ? "User Not Found" : "Analysis Failed"}
+        {isRateLimit ?"Limit Reached" : isNotFound ?"User Not Found" :"Analysis Failed"}
       </h2>
       
       <p className="text-gray-400 text-sm mb-8 leading-relaxed">
@@ -45,7 +45,7 @@ export default function ErrorCard({ message, action }: ErrorCardProps) {
         {isRateLimit && (
           <button
             onClick={() => signIn("github")}
-            className="w-full bg-white text-gray-950 font-bold py-3 rounded hover:bg-gray-200 transition-colors shadow-lg"
+ className="w-full bg-white text-gray-950 font-bold py-3 rounded hover:bg-gray-200 transition-colors shadow-lg"
           >
             Log in with GitHub
           </button>
@@ -54,7 +54,7 @@ export default function ErrorCard({ message, action }: ErrorCardProps) {
         {action && (
           <button
             onClick={action.onClick}
-            className="w-full bg-gray-800 hover:bg-gray-700 text-white font-bold py-3 rounded border border-gray-700 transition-colors"
+ className="w-full bg-gray-800 hover:bg-gray-700 text-white font-bold py-3 rounded border border-gray-700 transition-colors"
           >
             {action.label}
           </button>
@@ -62,7 +62,7 @@ export default function ErrorCard({ message, action }: ErrorCardProps) {
 
         <Link
           href="/"
-          className="text-xs text-gray-600 hover:text-gray-400 uppercase tracking-widest font-bold pt-2 transition-colors"
+ className="text-xs text-gray-600 hover:text-gray-400 uppercase tracking-widest font-bold pt-2 transition-colors"
         >
           &larr; Back to search
         </Link>

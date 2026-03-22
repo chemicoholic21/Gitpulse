@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { useLeaderboard } from "@/hooks/useLeaderboard";
-import Link from "next/link";
+import { useState } from"react";
+import { useRouter } from"next/navigation";
+import { useSession } from"next-auth/react";
+import { useLeaderboard } from"@/hooks/useLeaderboard";
+import Link from"next/link";
 
 export default function HomePage() {
   const [username, setUsername] = useState("");
@@ -22,7 +22,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0d1117] text-gray-400 selection:bg-sky-500/30">
+    <div className="min-h-screen bg-gray-950 text-gray-400 selection:bg-sky-500/30">
       {/* Cinematic Hero Section */}
       <section className="relative min-h-[90vh] flex flex-col items-center justify-center pt-32 md:pt-40 pb-32 px-4 overflow-hidden">
         {/* Atmospheric Blurs */}
@@ -31,7 +31,7 @@ export default function HomePage() {
         
         <div className="container mx-auto relative z-10 text-center">
           <div className="max-w-5xl mx-auto">
-            <span className="inline-block text-sky-400 font-mono text-sm tracking-[0.3em] uppercase mb-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+            <span className="inline-block text-sky-400  text-sm tracking-[0.3em] uppercase mb-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
               Developer Intelligence Platform
             </span>
             <h1 className="editorial-heading text-6xl md:text-9xl mb-8 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
@@ -50,14 +50,14 @@ export default function HomePage() {
                   <input
                     type="text"
                     placeholder="Search any GitHub identity..."
-                    className="w-full bg-transparent border-none py-4 text-white placeholder-gray-600 focus:outline-none text-lg"
+ className="w-full bg-transparent border-none py-4 text-white placeholder-gray-600 focus:outline-none text-lg"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                   />
                   <button
                     type="submit"
                     disabled={isPending}
-                    className="bg-white text-black font-bold h-14 px-10 rounded-full transition-all hover:scale-105 active:scale-95 disabled:bg-gray-800 disabled:text-gray-500 flex items-center justify-center min-w-[140px]"
+ className="bg-white text-black font-bold h-14 px-10 rounded-full transition-all hover:scale-105 active:scale-95 disabled:bg-gray-800 disabled:text-gray-500 flex items-center justify-center min-w-[140px]"
                   >
                     {isPending ? (
                       <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
@@ -65,7 +65,7 @@ export default function HomePage() {
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                       </svg>
                     ) : (
-                      "Analyze"
+"Analyze"
                     )}
                   </button>
                 </div>
@@ -75,12 +75,12 @@ export default function HomePage() {
                 <div className="flex items-center justify-center gap-6">
                   <Link
                     href={`/user/${(session.user.login || session.user.name!).toLowerCase()}`}
-                    className="group flex items-center gap-4 text-sm tracking-widest uppercase font-bold text-gray-500 hover:text-white transition-all"
+ className="group flex items-center gap-4 text-sm tracking-widest uppercase font-bold text-gray-500 hover:text-white transition-all"
                   >
                     <img
-                      src={session.user.image || ""}
-                      alt={session.user.name || "User"}
-                      className="w-10 h-10 rounded-full border border-white/10 grayscale group-hover:grayscale-0 transition-all"
+                      src={session.user.image ||""}
+                      alt={session.user.name ||"User"}
+ className="w-10 h-10 rounded-full border border-white/10 grayscale group-hover:grayscale-0 transition-all"
                     />
                     <span>Analyze my identity &rarr;</span>
                   </Link>
@@ -105,7 +105,7 @@ export default function HomePage() {
         <div className="container mx-auto max-w-6xl relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-24 items-center">
             <div>
-              <span className="text-sky-400 font-mono text-xs tracking-widest uppercase mb-6 block font-bold">Metrics & Impact</span>
+              <span className="text-sky-400  text-xs tracking-widest uppercase mb-6 block font-bold">Metrics & Impact</span>
               <h2 className="editorial-heading text-5xl md:text-6xl mb-8 leading-tight">
                 Beyond the <br />
                 <span className="italic text-white/80">contribution graph.</span>
@@ -127,17 +127,17 @@ export default function HomePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="cinematic-card p-8 group">
                 <p className="text-gray-600 text-[10px] tracking-[0.2em] uppercase mb-2 font-bold group-hover:text-sky-400 transition-colors">Cumulative Rank</p>
-                <p className="text-4xl font-serif text-white">#1,422</p>
+                <p className="text-4xl  text-white">#1,422</p>
               </div>
               <div className="cinematic-card p-8 group">
                 <p className="text-gray-600 text-[10px] tracking-[0.2em] uppercase mb-2 font-bold group-hover:text-purple-400 transition-colors">Status</p>
-                <p className="text-xl font-serif text-white uppercase tracking-wider">Core</p>
+                <p className="text-xl  text-white uppercase tracking-wider">Core</p>
               </div>
               <div className="cinematic-card p-8 sm:col-span-2 group">
                 <p className="text-gray-600 text-[10px] tracking-[0.2em] uppercase mb-4 font-bold group-hover:text-sky-400 transition-colors">Primary Repository</p>
                 <div className="flex justify-between items-end">
-                  <p className="text-2xl font-serif text-white">facebook/react</p>
-                  <p className="text-sky-400 font-mono text-sm">+842.1</p>
+                  <p className="text-2xl  text-white">facebook/react</p>
+                  <p className="text-sky-400  text-sm">+842.1</p>
                 </div>
               </div>
             </div>
@@ -179,18 +179,18 @@ export default function HomePage() {
                 ) : (
                   leaderboard?.data?.slice(0, 5).map((entry) => (
                     <tr key={entry.username} className="hover:bg-white/[0.02] transition-colors group">
-                      <td className="px-10 py-6 font-mono text-gray-600 group-hover:text-sky-400 transition-colors">
+                      <td className="px-10 py-6  text-gray-600 group-hover:text-sky-400 transition-colors">
                         {entry.rank.toString().padStart(2, '0')}
                       </td>
                       <td className="px-10 py-6">
                         <Link href={`/user/${entry.username}`} className="flex items-center gap-4">
                           <img src={entry.avatarUrl} alt={entry.username} className="w-8 h-8 rounded-full border border-white/10 grayscale group-hover:grayscale-0 transition-all" />
-                          <span className="text-white font-medium group-hover:text-sky-400 transition-colors font-serif text-lg">
+                          <span className="text-white font-medium group-hover:text-sky-400 transition-colors  text-lg">
                             {entry.username}
                           </span>
                         </Link>
                       </td>
-                      <td className="px-10 py-6 text-right font-mono text-white font-bold text-lg">
+                      <td className="px-10 py-6 text-right  text-white font-bold text-lg">
                         {entry.totalScore.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
                       </td>
                     </tr>

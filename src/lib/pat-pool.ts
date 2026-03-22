@@ -1,4 +1,4 @@
-import { Redis } from "@upstash/redis";
+import { Redis } from"@upstash/redis";
 
 // Initialize Redis client for PAT tracking
 const redis = new Redis({

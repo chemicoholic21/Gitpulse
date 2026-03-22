@@ -1,6 +1,6 @@
-import { graphql } from "@octokit/graphql";
-import { RawGitHubData } from "./scoring";
-import { getBestToken, updateTokenPoints } from "./pat-pool";
+import { graphql } from"@octokit/graphql";
+import { RawGitHubData } from"./scoring";
+import { getBestToken, updateTokenPoints } from"./pat-pool";
 
 // ---------------------------------------------------------------------------
 // GraphQL query types (responses)
@@ -251,7 +251,7 @@ export async function fetchUserAnalysis(
 
   const user = userRes.user;
   if (!user) {
-    throw new Error(`User "${username}" not found`);
+    throw new Error(`User"${username}" not found`);
   }
 
   // Combine owned repos and repos contributed to
@@ -291,7 +291,7 @@ export async function fetchUserAnalysis(
         .slice(0, 50) // Search limit to avoid huge query strings
         .map((r) => `repo:${r.ownerLogin}/${r.name}`);
       
-      const searchQuery = `${repoQueries.join(" ")} is:pr is:merged author:${username}`;
+      const searchQuery = `${repoQueries.join("")} is:pr is:merged author:${username}`;
 
       const searchRes = await client<SearchResponse>(SEARCH_MERGED_PRS_QUERY, {
         searchQuery,

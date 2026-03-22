@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { LeaderboardEntry } from "@/lib/scoring";
+import { useQuery } from"@tanstack/react-query";
+import { LeaderboardEntry } from"@/lib/scoring";
 
 export interface LeaderboardResponse {
   data: LeaderboardEntry[];
@@ -33,10 +33,10 @@ export function useLeaderboard(
       if (category) params.set("category", category);
       if (sortBy) params.set("sortBy", sortBy);
       if (sortOrder) params.set("sortOrder", sortOrder);
-      if (hireable === true) params.set("hireable", "true");
-      if (hasLinkedIn === true) params.set("hasLinkedIn", "true");
-      if (hasX === true) params.set("hasX", "true");
-      if (hasEmail === true) params.set("hasEmail", "true");
+      if (hireable === true) params.set("hireable","true");
+      if (hasLinkedIn === true) params.set("hasLinkedIn","true");
+      if (hasX === true) params.set("hasX","true");
+      if (hasEmail === true) params.set("hasEmail","true");
       if (skill) params.set("skill", skill);
       
       const url = `/api/leaderboard?${params.toString()}`;

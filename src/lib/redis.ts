@@ -1,6 +1,6 @@
-import { Redis } from "@upstash/redis";
-import { Ratelimit } from "@upstash/ratelimit";
-import { ScoredProfile, RawGitHubData } from "./scoring";
+import { Redis } from"@upstash/redis";
+import { Ratelimit } from"@upstash/ratelimit";
+import { ScoredProfile, RawGitHubData } from"./scoring";
 
 // ---------------------------------------------------------------------------
 // Client Initialization
@@ -13,8 +13,8 @@ export const redis = new Redis({
 
 export const ratelimit = new Ratelimit({
   redis,
-  limiter: Ratelimit.slidingWindow(10, "60 s"),
-  prefix: "@upstash/ratelimit",
+  limiter: Ratelimit.slidingWindow(10,"60 s"),
+  prefix:"@upstash/ratelimit",
 });
 
 // ---------------------------------------------------------------------------

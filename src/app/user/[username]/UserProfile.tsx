@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { useAnalysis } from "@/hooks/useAnalysis";
-import { useUserRank } from "@/hooks/useUserRank";
-import { useQueryClient } from "@tanstack/react-query";
+import { useState } from"react";
+import { useAnalysis } from"@/hooks/useAnalysis";
+import { useUserRank } from"@/hooks/useUserRank";
+import { useQueryClient } from"@tanstack/react-query";
 import {
   BarChart,
   Bar,
@@ -12,28 +12,28 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
-} from "recharts";
-import Link from "next/link";
-import ProfileSkeleton from "@/components/skeletons/ProfileSkeleton";
-import { SkillBreakdown } from "@/components/SkillBreakdown";
-import { Linkedin, Twitter, Globe, Mail, MapPin, Building2, Github, Calendar } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+} from"recharts";
+import Link from"next/link";
+import ProfileSkeleton from"@/components/skeletons/ProfileSkeleton";
+import { SkillBreakdown } from"@/components/SkillBreakdown";
+import { Linkedin, Twitter, Globe, Mail, MapPin, Building2, Github, Calendar } from"lucide-react";
+import { Badge } from"@/components/ui/badge";
 
 const EXPERIENCE_COLORS = {
-  Newcomer: "text-gray-500 border-white/5 bg-white/5",
-  Contributor: "text-blue-400 border-blue-500/20 bg-blue-500/5",
-  "Active Contributor": "text-sky-400 border-sky-500/20 bg-sky-500/5",
-  "Core Contributor": "text-purple-400 border-purple-500/20 bg-purple-500/5",
-  "Open Source Leader": "text-white border-white/20 bg-white/10",
+  Newcomer:"text-gray-500 border-white/5 bg-white/5",
+  Contributor:"text-blue-400 border-blue-500/20 bg-blue-500/5",
+"Active Contributor":"text-sky-400 border-sky-500/20 bg-sky-500/5",
+"Core Contributor":"text-purple-400 border-purple-500/20 bg-purple-500/5",
+"Open Source Leader":"text-white border-white/20 bg-white/10",
 };
 
 const CHART_COLORS = [
-  "#ffffff",
-  "#94a3b8",
-  "#64748b",
-  "#475569",
-  "#334155",
-  "#1e293b",
+"#ffffff",
+"#94a3b8",
+"#64748b",
+"#475569",
+"#334155",
+"#1e293b",
 ];
 
 export default function UserProfile({ username }: { username: string }) {
@@ -62,7 +62,7 @@ export default function UserProfile({ username }: { username: string }) {
       <div className="container mx-auto px-6 py-40 text-center min-h-screen">
         <div className="max-w-xl mx-auto p-12 cinematic-card">
           <h2 className="editorial-heading text-3xl text-red-400 mb-6">System Error</h2>
-          <p className="text-gray-500 mb-8 font-mono text-sm">{(error as Error).message}</p>
+          <p className="text-gray-500 mb-8  text-sm">{(error as Error).message}</p>
           <Link href="/" className="text-white font-bold tracking-widest uppercase text-xs border-b border-white/20 pb-2 hover:border-white transition-all">
             &larr; Return to Search
           </Link>
@@ -79,7 +79,7 @@ export default function UserProfile({ username }: { username: string }) {
     .map(([name, count]) => ({ name, count }));
 
   const formatStars = (stars: number) => {
-    if (stars >= 1000) return (stars / 1000).toFixed(1) + "K";
+    if (stars >= 1000) return (stars / 1000).toFixed(1) +"K";
     return stars.toString();
   };
 
@@ -99,7 +99,7 @@ export default function UserProfile({ username }: { username: string }) {
             <img
               src={profile.user.avatarUrl}
               alt={username}
-              className="relative w-40 h-40 rounded-full border border-white/10 grayscale hover:grayscale-0 transition-all duration-700 shadow-2xl"
+ className="relative w-40 h-40 rounded-full border border-white/10 grayscale hover:grayscale-0 transition-all duration-700 shadow-2xl"
             />
           </div>
           
@@ -116,10 +116,10 @@ export default function UserProfile({ username }: { username: string }) {
             </div>
             
             <p className="text-xl text-gray-500 mb-8 max-w-2xl leading-relaxed italic">
-              &ldquo;{profile.user.bio || "No biography provided for this identity."}&rdquo;
+              &ldquo;{profile.user.bio ||"No biography provided for this identity."}&rdquo;
             </p>
 
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-8 gap-y-4 mb-10 text-xs text-gray-400 font-mono tracking-wider">
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-8 gap-y-4 mb-10 text-xs text-gray-400  tracking-wider">
               {profile.user.location && (
                 <div className="flex items-center gap-2">
                   <MapPin className="h-3.5 w-3.5 text-gray-600" />
@@ -135,7 +135,7 @@ export default function UserProfile({ username }: { username: string }) {
               {profile.user.websiteUrl && (
                 <a href={profile.user.websiteUrl.startsWith('http') ? profile.user.websiteUrl : `https://${profile.user.websiteUrl}`} 
                    target="_blank" 
-                   className="flex items-center gap-2 hover:text-white transition-colors">
+ className="flex items-center gap-2 hover:text-white transition-colors">
                   <Globe className="h-3.5 w-3.5 text-gray-600" />
                   {profile.user.websiteUrl.replace(/^https?:\/\//, '')}
                 </a>
@@ -143,7 +143,7 @@ export default function UserProfile({ username }: { username: string }) {
               {profile.user.twitterUsername && (
                 <a href={`https://twitter.com/${profile.user.twitterUsername}`} 
                    target="_blank" 
-                   className="flex items-center gap-2 hover:text-sky-400 transition-colors">
+ className="flex items-center gap-2 hover:text-sky-400 transition-colors">
                   <Twitter className="h-3.5 w-3.5 text-gray-600" />
                   @{profile.user.twitterUsername}
                 </a>
@@ -151,14 +151,14 @@ export default function UserProfile({ username }: { username: string }) {
               {profile.user.linkedin && (
                 <a href={profile.user.linkedin.startsWith('http') ? profile.user.linkedin : `https://${profile.user.linkedin}`} 
                    target="_blank" 
-                   className="flex items-center gap-2 hover:text-blue-400 transition-colors">
+ className="flex items-center gap-2 hover:text-blue-400 transition-colors">
                   <Linkedin className="h-3.5 w-3.5 text-gray-600" />
                   LinkedIn
                 </a>
               )}
               {profile.user.email && (
                 <a href={`mailto:${profile.user.email}`}
-                   className="flex items-center gap-2 hover:text-yellow-400 transition-colors">
+ className="flex items-center gap-2 hover:text-yellow-400 transition-colors">
                   <Mail className="h-3.5 w-3.5 text-gray-600" />
                   {profile.user.email}
                 </a>
@@ -173,32 +173,32 @@ export default function UserProfile({ username }: { username: string }) {
             
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-8 text-[10px] tracking-[0.2em] uppercase font-bold text-gray-600">
               <span className="flex items-center gap-2">
-                <span className="text-white text-base font-serif">{profile.user.followers}</span> Followers
+                <span className="text-white text-base">{profile.user.followers}</span> Followers
               </span>
               <span className="flex items-center gap-2">
-                <span className="text-white text-base font-serif">{profile.user.following}</span> Following
+                <span className="text-white text-base">{profile.user.following}</span> Following
               </span>
               <span className="flex items-center gap-2">
-                <span className="text-white text-base font-serif">{profile.contributionCount}</span> Merged PRs
+                <span className="text-white text-base">{profile.contributionCount}</span> Merged PRs
               </span>
               <div className="h-4 w-px bg-white/5 hidden md:block" />
               <a
                 href={profile.user.url || `https://github.com/${username}`}
                 target="_blank"
-                className="flex items-center gap-2 hover:text-white transition-all border-b border-white/5 pb-1 hover:border-white"
+ className="flex items-center gap-2 hover:text-white transition-all border-b border-white/5 pb-1 hover:border-white"
               >
                 <Github className="h-3.5 w-3.5" />
                 View GitHub
               </a>
               <button
                 onClick={copyToClipboard}
-                className="hover:text-white transition-all border-b border-white/5 pb-1 hover:border-white"
+ className="hover:text-white transition-all border-b border-white/5 pb-1 hover:border-white"
               >
                 Share Identity
               </button>
               <button
                 onClick={handleRefresh}
-                className="hover:text-white transition-all border-b border-white/5 pb-1 hover:border-white"
+ className="hover:text-white transition-all border-b border-white/5 pb-1 hover:border-white"
               >
                 Recalibrate
               </button>
@@ -207,7 +207,7 @@ export default function UserProfile({ username }: { username: string }) {
             {profile.uniqueSkills && profile.uniqueSkills.length > 0 && (
               <div className="flex flex-wrap justify-center md:justify-start gap-2 mt-8">
                 {profile.uniqueSkills.map((skill) => (
-                  <Badge key={skill} variant="outline" className="bg-white/5 border-white/10 text-gray-400 font-mono text-[10px] lowercase px-2 py-0.5">
+                  <Badge key={skill} variant="outline" className="bg-white/5 border-white/10 text-gray-400  text-[10px] lowercase px-2 py-0.5">
                     {skill}
                   </Badge>
                 ))}
@@ -217,11 +217,11 @@ export default function UserProfile({ username }: { username: string }) {
 
           <div className="md:text-right flex flex-col items-center md:items-end pt-4">
             <div className="text-[10px] uppercase text-gray-600 font-bold tracking-[0.3em] mb-4">Impact Score</div>
-            <div className="text-7xl md:text-8xl font-serif text-white leading-none mb-4 tabular-nums">
+            <div className="text-7xl md:text-8xl  text-white leading-none mb-4 tabular-nums">
               {profile.totalScore.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
             </div>
             {rankData && (
-              <div className="text-sky-400 font-mono text-xs tracking-widest uppercase font-bold mb-12">
+              <div className="text-sky-400  text-xs tracking-widest uppercase font-bold mb-12">
                 Global Protocol Rank #{rankData.rank.toString().padStart(4, '0')}
               </div>
             )}
@@ -246,7 +246,7 @@ export default function UserProfile({ username }: { username: string }) {
           <div className="lg:col-span-2 space-y-10 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200">
             <div className="flex items-center justify-between px-2">
               <h2 className="editorial-heading text-3xl">Contribution Matrix</h2>
-              <span className="text-[10px] text-gray-600 font-mono tracking-widest uppercase">Last 50 Repositories</span>
+              <span className="text-[10px] text-gray-600  tracking-widest uppercase">Last 50 Repositories</span>
             </div>
             
             <div className="cinematic-card overflow-x-auto">
@@ -266,7 +266,7 @@ export default function UserProfile({ username }: { username: string }) {
                         <Link
                           href={`https://github.com/${repo.ownerLogin || username}/${repo.name}`}
                           target="_blank"
-                          className="text-white font-serif text-lg group-hover:text-sky-400 transition-colors"
+ className="text-white  text-lg group-hover:text-sky-400 transition-colors"
                         >
                           {repo.name}
                         </Link>
@@ -274,23 +274,23 @@ export default function UserProfile({ username }: { username: string }) {
                           {repo.language || 'Unknown'}
                         </div>
                       </td>
-                      <td className="px-6 py-8 font-mono text-gray-500">
+                      <td className="px-6 py-8  text-gray-500">
                         {formatStars(repo.stars)} <span className="text-[10px] opacity-30 tracking-tighter ml-1">stars</span>
                       </td>
                       <td className="px-6 py-8">
                         <div className="flex flex-col gap-2">
-                          <span className="font-mono text-gray-400 text-xs">
+                          <span className=" text-gray-400 text-xs">
                             {repo.userPRs} <span className="opacity-30">/ {repo.totalPRs} PRs</span>
                           </span>
                           <div className="w-32 h-[1px] bg-white/5 relative">
                              <div 
-                               className="absolute h-full bg-sky-500/50 transition-all duration-1000"
+ className="absolute h-full bg-sky-500/50 transition-all duration-1000"
                                style={{ width: `${Math.min((repo.userPRs / repo.totalPRs) * 100, 100)}%` }}
                              />
                           </div>
                         </div>
                       </td>
-                      <td className="px-8 py-8 text-right font-mono text-white font-bold text-lg">
+                      <td className="px-8 py-8 text-right  text-white font-bold text-lg">
                         +{repo.score.toLocaleString(undefined, { maximumFractionDigits: 1 })}
                       </td>
                     </tr>
@@ -316,18 +316,18 @@ export default function UserProfile({ username }: { username: string }) {
                       type="category"
                       axisLine={false}
                       tickLine={false}
-                      tick={{ fill: "#64748b", fontSize: 10, fontWeight: 700, letterSpacing: '0.1em' }}
+                      tick={{ fill:"#64748b", fontSize: 10, fontWeight: 700, letterSpacing: '0.1em' }}
                       width={100}
                     />
                     <Tooltip
-                      cursor={{ fill: "rgba(255,255,255,0.02)" }}
+                      cursor={{ fill:"rgba(255,255,255,0.02)" }}
                       contentStyle={{
-                        backgroundColor: "#0d1117",
-                        border: "1px solid rgba(255,255,255,0.1)",
-                        borderRadius: "8px",
-                        fontSize: "10px",
-                        fontFamily: "monospace",
-                        textTransform: "uppercase",
+                        backgroundColor:"#0d1117",
+                        border:"1px solid rgba(255,255,255,0.1)",
+                        borderRadius:"8px",
+                        fontSize:"10px",
+                        fontFamily:"monospace",
+                        textTransform:"uppercase",
                       }}
                     />
                     <Bar dataKey="count" radius={[0, 4, 4, 0]} barSize={12}>
@@ -350,10 +350,10 @@ export default function UserProfile({ username }: { username: string }) {
           <div className="cinematic-card overflow-hidden">
             <button
               onClick={() => setShowExplanation(!showExplanation)}
-              className="w-full px-12 py-8 flex items-center justify-between hover:bg-white/[0.01] transition-all"
+ className="w-full px-12 py-8 flex items-center justify-between hover:bg-white/[0.01] transition-all"
             >
               <span className="editorial-heading text-xl">Score Breakdown</span>
-              <span className="text-gray-600 font-mono text-2xl">{showExplanation ? "−" : "+"}</span>
+              <span className="text-gray-600  text-2xl">{showExplanation ?"−" :"+"}</span>
             </button>
             
             {showExplanation && (
@@ -361,7 +361,7 @@ export default function UserProfile({ username }: { username: string }) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 pt-12 border-t border-white/5">
                   <div>
                     <h4 className="text-[10px] tracking-[0.3em] uppercase font-bold text-sky-400 mb-6">Mathematical Foundation</h4>
-                    <div className="bg-black/40 p-10 rounded-xl border border-white/5 font-mono text-sm leading-relaxed mb-8 italic text-white/80">
+                    <div className="bg-black/40 p-10 rounded-xl border border-white/5  text-sm leading-relaxed mb-8 italic text-white/80">
                       score = stars × (merged_prs_by_identity / total_merged_prs)
                     </div>
                     <ul className="space-y-6 text-xs text-gray-500 tracking-widest leading-loose uppercase font-bold">
@@ -385,7 +385,7 @@ export default function UserProfile({ username }: { username: string }) {
                     {topRepo && (
                       <div className="space-y-6">
                         <p className="text-xs text-gray-600 italic tracking-widest uppercase font-bold">Primary Sample: {topRepo.name}</p>
-                        <div className="cinematic-card p-10 bg-black/20 font-mono text-xs space-y-4">
+                        <div className="cinematic-card p-10 bg-black/20  text-xs space-y-4">
                           <div className="flex justify-between">
                             <span className="text-gray-600 uppercase">Star Magnitude</span>
                             <span className="text-white">{topRepo.stars}</span>

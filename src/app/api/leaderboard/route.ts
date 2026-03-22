@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { leaderboard } from "@/lib/schema";
-import { desc, ilike, count, sql, or, and, eq } from "drizzle-orm";
+import { NextRequest, NextResponse } from"next/server";
+import { db } from"@/lib/db";
+import { leaderboard } from"@/lib/schema";
+import { desc, ilike, count, sql, or, and, eq } from"drizzle-orm";
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,23 +14,23 @@ export async function GET(request: NextRequest) {
     const location = searchParams.get("location");
     const search = searchParams.get("search");
     const category = searchParams.get("category");
-    const hireable = searchParams.get("hireable") === "true";
-    const hasLinkedIn = searchParams.get("hasLinkedIn") === "true";
-    const hasX = searchParams.get("hasX") === "true";
-    const hasEmail = searchParams.get("hasEmail") === "true";
+    const hireable = searchParams.get("hireable") ==="true";
+    const hasLinkedIn = searchParams.get("hasLinkedIn") ==="true";
+    const hasX = searchParams.get("hasX") ==="true";
+    const hasEmail = searchParams.get("hasEmail") ==="true";
     const skill = searchParams.get("skill");
-    const sortBy = searchParams.get("sortBy") || "totalScore";
-    const sortOrder = searchParams.get("sortOrder") || "desc";
+    const sortBy = searchParams.get("sortBy") ||"totalScore";
+    const sortOrder = searchParams.get("sortOrder") ||"desc";
 
     // Map category to column
     let scoreColumn: any = leaderboard.totalScore;
     if (category) {
       switch (category.toLowerCase()) {
-        case "ai": scoreColumn = leaderboard.aiScore; break;
-        case "backend": scoreColumn = leaderboard.backendScore; break;
-        case "frontend": scoreColumn = leaderboard.frontendScore; break;
-        case "devops": scoreColumn = leaderboard.devopsScore; break;
-        case "data": scoreColumn = leaderboard.dataScore; break;
+        case"ai": scoreColumn = leaderboard.aiScore; break;
+        case"backend": scoreColumn = leaderboard.backendScore; break;
+        case"frontend": scoreColumn = leaderboard.frontendScore; break;
+        case"devops": scoreColumn = leaderboard.devopsScore; break;
+        case"data": scoreColumn = leaderboard.dataScore; break;
       }
     }
 
@@ -73,19 +73,19 @@ export async function GET(request: NextRequest) {
 
     // Determine sort column and direction
     let orderByColumn: any;
-    if (sortBy === "totalScore") {
+    if (sortBy ==="totalScore") {
       orderByColumn = scoreColumn;
-    } else if (sortBy === "updatedAt") {
+    } else if (sortBy ==="updatedAt") {
       orderByColumn = leaderboard.updatedAt;
-    } else if (sortBy === "username") {
+    } else if (sortBy ==="username") {
       orderByColumn = leaderboard.username;
-    } else if (sortBy === "hireable") {
+    } else if (sortBy ==="hireable") {
       orderByColumn = leaderboard.hireable;
     } else {
       orderByColumn = scoreColumn;
     }
 
-    const sortFn = sortOrder === "asc" ? (c: any) => c : (c: any) => desc(c);
+    const sortFn = sortOrder ==="asc" ? (c: any) => c : (c: any) => desc(c);
 
     // Get total count for pagination
     let countQuery = db.select({ value: count() }).from(leaderboard);
@@ -133,7 +133,7 @@ export async function GET(request: NextRequest) {
 
     console.error("[leaderboard]", error);
     return NextResponse.json(
-      { error: "Failed to fetch leaderboard" },
+      { error:"Failed to fetch leaderboard" },
       { status: 500 }
     );
   }

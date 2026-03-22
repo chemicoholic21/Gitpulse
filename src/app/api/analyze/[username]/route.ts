@@ -1,25 +1,25 @@
-import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
-import { checkRateLimit, getCachedAnalysis, setCachedAnalysis, getRawAnalysis, setRawAnalysis } from "@/lib/redis";
-import { fetchUserAnalysis, extractLinkedIn } from "@/lib/github";
-import { computeScore } from "@/lib/scoring";
-import { db } from "@/lib/db";
-import { analyses, leaderboard } from "@/lib/schema";
-import { eq } from "drizzle-orm";
+import { NextRequest, NextResponse } from"next/server";
+import { auth } from"@/auth";
+import { checkRateLimit, getCachedAnalysis, setCachedAnalysis, getRawAnalysis, setRawAnalysis } from"@/lib/redis";
+import { fetchUserAnalysis, extractLinkedIn } from"@/lib/github";
+import { computeScore } from"@/lib/scoring";
+import { db } from"@/lib/db";
+import { analyses, leaderboard } from"@/lib/schema";
+import { eq } from"drizzle-orm";
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ username: string }> }
 ) {
   const { username } = await params;
-  const ip = request.headers.get("x-forwarded-for") ?? "127.0.0.1";
+  const ip = request.headers.get("x-forwarded-for") ??"127.0.0.1";
 
   try {
     // 1. Check rate limit by IP
     const { success } = await checkRateLimit(ip);
     if (!success) {
       return NextResponse.json(
-        { error: "Too many requests. Please wait a minute." },
+        { error:"Too many requests. Please wait a minute." },
         { status: 429 }
       );
     }
@@ -46,11 +46,11 @@ export async function GET(
         await setRawAnalysis(username, rawData);
       } catch (error: any) {
         if (error.message.includes("not found")) {
-          return NextResponse.json({ error: "User not found" }, { status: 404 });
+          return NextResponse.json({ error:"User not found" }, { status: 404 });
         }
         if (error.message.includes("rate limit")) {
           return NextResponse.json(
-            { error: "GitHub rate limit reached. Please log in." },
+            { error:"GitHub rate limit reached. Please log in." },
             { status: 429 }
           );
         }
@@ -164,7 +164,7 @@ export async function GET(
   } catch (error: any) {
     console.error(`[analyze/${username}]`, error);
     return NextResponse.json(
-      { error: "Analysis failed", details: error.message },
+      { error:"Analysis failed", details: error.message },
       { status: 500 }
     );
   }

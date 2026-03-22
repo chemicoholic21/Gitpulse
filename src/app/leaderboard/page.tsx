@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useLeaderboard } from "@/hooks/useLeaderboard";
-import { LeaderboardTable } from "@/components/leaderboard/leaderboard-table";
-import LeaderboardSkeleton from "@/components/skeletons/LeaderboardSkeleton";
+import { useState, useEffect } from"react";
+import { useLeaderboard } from"@/hooks/useLeaderboard";
+import { LeaderboardTable } from"@/components/leaderboard/leaderboard-table";
+import LeaderboardSkeleton from"@/components/skeletons/LeaderboardSkeleton";
 
 export default function LeaderboardPage() {
   const [location, setLocation] = useState("");
@@ -62,10 +62,10 @@ export default function LeaderboardPage() {
     setPageIndex(0);
   };
 
-  const handleContactFilterChange = (type: "hasLinkedIn" | "hasX" | "hasEmail", value: boolean) => {
-    if (type === "hasLinkedIn") setHasLinkedIn(value);
-    if (type === "hasX") setHasX(value);
-    if (type === "hasEmail") setHasEmail(value);
+  const handleContactFilterChange = (type:"hasLinkedIn" |"hasX" |"hasEmail", value: boolean) => {
+    if (type ==="hasLinkedIn") setHasLinkedIn(value);
+    if (type ==="hasX") setHasX(value);
+    if (type ==="hasEmail") setHasEmail(value);
     setPageIndex(0);
   };
 
@@ -90,18 +90,18 @@ export default function LeaderboardPage() {
   );
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-200 py-24 px-6">
+    <div className="min-h-screen bg-gray-950 text-gray-200 py-24 px-6">
       <div className="container mx-auto max-w-6xl">
         <div className="mb-12 space-y-4">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white">
             Developer Leaderboard
           </h1>
-          <p className="text-lg text-neutral-400 max-w-2xl leading-relaxed">
+          <p className="text-lg text-gray-400 max-w-2xl leading-relaxed">
             Discover the most impactful open-source contributors based on their merged pull requests and project influence.
           </p>
         </div>
 
-        <div className="bg-neutral-900/30 border border-neutral-800 rounded-xl p-4 md:p-8 backdrop-blur-sm">
+        <div className="bg-gray-900/30 border border-gray-800 rounded-xl p-4 md:p-8 backdrop-blur-sm">
           {isLoading && !data ? (
             <LeaderboardSkeleton />
           ) : (
@@ -134,7 +134,7 @@ export default function LeaderboardPage() {
           )}
         </div>
 
-        <div className="mt-12 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] text-neutral-600 font-mono uppercase tracking-[0.3em] border-t border-neutral-800 pt-8">
+        <div className="mt-12 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] text-gray-600  uppercase tracking-[0.3em] border-t border-gray-800 pt-8">
           <div>Updated every 6 hours • Server Time: {new Date().toLocaleTimeString()}</div>
           <div className="flex gap-8">
             <span className="flex items-center gap-2">

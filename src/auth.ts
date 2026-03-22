@@ -1,8 +1,8 @@
 // NextAuth v5 configuration - version 3
-import NextAuth, { type DefaultSession } from "next-auth";
-import GitHub from "next-auth/providers/github";
+import NextAuth, { type DefaultSession } from"next-auth";
+import GitHub from"next-auth/providers/github";
 
-declare module "next-auth" {
+declare module"next-auth" {
   interface Session {
     accessToken?: string;
     user: {
@@ -11,7 +11,7 @@ declare module "next-auth" {
   }
 }
 
-declare module "@auth/core/jwt" {
+declare module"@auth/core/jwt" {
   interface JWT {
     accessToken?: string;
     login?: string;
@@ -21,7 +21,7 @@ declare module "@auth/core/jwt" {
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
     GitHub({
-      authorization: { params: { scope: "read:user public_repo" } },
+      authorization: { params: { scope:"read:user public_repo" } },
     }),
   ],
   callbacks: {

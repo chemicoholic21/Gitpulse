@@ -1,4 +1,4 @@
-import { boolean, integer, pgTable, real, text, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { boolean, integer, pgTable, real, text, timestamp, jsonb } from"drizzle-orm/pg-core";
 
 export const analyses = pgTable("analyses", {
     id: text("id").primaryKey(), // GitHub username

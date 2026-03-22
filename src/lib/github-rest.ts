@@ -1,5 +1,5 @@
-import { Octokit } from "@octokit/rest";
-import { getBestToken } from "./pat-pool";
+import { Octokit } from"@octokit/rest";
+import { getBestToken } from"./pat-pool";
 
 export async function searchUsersByLocation(location: string, page: number = 1, perPage: number = 100) {
   const { token } = await getBestToken();
@@ -13,8 +13,8 @@ export async function searchUsersByLocation(location: string, page: number = 1, 
     q,
     page,
     per_page: perPage,
-    sort: "followers",
-    order: "desc",
+    sort:"followers",
+    order:"desc",
   });
 
   return {

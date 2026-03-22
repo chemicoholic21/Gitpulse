@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { leaderboard } from "@/lib/schema";
-import { eq, gt, sql, count } from "drizzle-orm";
+import { NextRequest, NextResponse } from"next/server";
+import { db } from"@/lib/db";
+import { leaderboard } from"@/lib/schema";
+import { eq, gt, sql, count } from"drizzle-orm";
 
 export async function GET(
   request: NextRequest,
@@ -19,7 +19,7 @@ export async function GET(
       .where(eq(leaderboard.username, username));
 
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json({ error:"User not found" }, { status: 404 });
     }
 
     // 2. Count users with higher score to determine rank
@@ -49,7 +49,7 @@ export async function GET(
   } catch (error) {
     console.error(`[leaderboard/${username}]`, error);
     return NextResponse.json(
-      { error: "Failed to fetch user rank" },
+      { error:"Failed to fetch user rank" },
       { status: 500 }
     );
   }

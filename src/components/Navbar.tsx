@@ -1,20 +1,20 @@
 "use client";
 
-import Link from "next/link";
-import AuthButton from "./AuthButton";
-import { useState } from "react";
+import Link from"next/link";
+import AuthButton from"./AuthButton";
+import { useState } from"react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-[100] border-b border-white/5 bg-[#0d1117]/80 backdrop-blur-xl">
+    <nav className="fixed top-0 left-0 right-0 z-[100] border-b border-white/5 bg-gray-950/80 backdrop-blur-xl">
       <div className="container mx-auto px-6 h-24 flex items-center justify-between">
         <div className="flex items-center gap-12">
           <Link href="/" className="flex items-center group shrink-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/icon.png" alt="Git Pull Talent" width={120} height={120} className="w-16 lg:w-[120px] h-auto group-hover:scale-110 transition-all duration-500 drop-shadow-lg" />
-            <span className="text-white font-serif text-lg lg:text-2xl tracking-tight -ml-2 lg:-ml-4 whitespace-nowrap">Git Pull Talent</span>
+            <span className="text-white  text-lg lg:text-2xl tracking-tight -ml-2 lg:-ml-4 whitespace-nowrap">Git Pull Talent</span>
           </Link>
 
           <div className="hidden lg:flex items-center gap-10">
@@ -36,7 +36,7 @@ export default function Navbar() {
 
         {/* Mobile Hamburger Button */}
         <button
-          className="lg:hidden text-white focus:outline-none p-2"
+ className="lg:hidden text-white focus:outline-none p-2"
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle menu"
         >
@@ -52,7 +52,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="lg:hidden absolute top-24 left-0 right-0 bg-[#0d1117]/95 border-b border-white/5 backdrop-blur-xl flex flex-col items-center py-6 gap-6 shadow-2xl">
+        <div className="lg:hidden absolute top-24 left-0 right-0 bg-gray-950/95 border-b border-white/5 backdrop-blur-xl flex flex-col items-center py-6 gap-6 shadow-2xl">
           <Link href="/" onClick={() => setIsOpen(false)} className="text-xs font-bold uppercase tracking-[0.3em] text-gray-400 hover:text-white transition-all">
             Identity
           </Link>

@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import"tailwindcss";
+@import"tw-animate-css";
+@import"shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -12,18 +12,13 @@
         color: #d1d5db;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        font-family: "Inter", system-ui, sans-serif;
+        font-family:"Inter", system-ui, sans-serif;
         overflow-x: hidden;
     }
 
-    h1, h2, h3, .font-serif {
-        font-family: "Playfair Display", serif;
-    }
-
     code,
-    pre,
-    .font-mono {
-        font-family: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+    pre {
+        font-family:"JetBrains Mono","Fira Code", ui-monospace, monospace;
     }
 
     *,
@@ -75,7 +70,7 @@
     }
 
     .editorial-heading {
-        @apply font-serif text-white tracking-tight leading-tight;
+        @apply  text-white tracking-tight leading-tight;
     }
 }
 
@@ -207,3 +202,4 @@
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
 }
+/* Rebuild trigger */

@@ -1,6 +1,6 @@
-import { Suspense } from "react";
-import UserProfile from "./UserProfile";
-import ProfileSkeleton from "@/components/skeletons/ProfileSkeleton";
+import { Suspense } from"react";
+import UserProfile from"./UserProfile";
+import ProfileSkeleton from"@/components/skeletons/ProfileSkeleton";
 
 export default async function UserPage({
   params,

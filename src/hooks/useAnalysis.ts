@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
-import { ScoredProfile } from "@/lib/scoring";
-import { useSession } from "next-auth/react";
+import { useQuery } from"@tanstack/react-query";
+import { ScoredProfile } from"@/lib/scoring";
+import { useSession } from"next-auth/react";
 
 export function useAnalysis(username: string) {
   const { data: session } = useSession();
@@ -18,7 +18,7 @@ export function useAnalysis(username: string) {
       const res = await fetch(`/api/analyze/${username}`, { headers });
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.error || "Analysis failed");
+        throw new Error(errorData.error ||"Analysis failed");
       }
       return res.json();
     },

@@ -1,17 +1,17 @@
-import { NextRequest, NextResponse } from "next/server";
-import { searchUsersByLocation } from "@/lib/github-rest";
-import { db } from "@/lib/db";
-import { analyses } from "@/lib/schema";
-import { inArray, eq } from "drizzle-orm";
+import { NextRequest, NextResponse } from"next/server";
+import { searchUsersByLocation } from"@/lib/github-rest";
+import { db } from"@/lib/db";
+import { analyses } from"@/lib/schema";
+import { inArray, eq } from"drizzle-orm";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const location = searchParams.get("location");
-  let page = parseInt(searchParams.get("page") || "1");
+  let page = parseInt(searchParams.get("page") ||"1");
   const perPage = 100;
 
   if (!location) {
-    return NextResponse.json({ error: "Location is required" }, { status: 400 });
+    return NextResponse.json({ error:"Location is required" }, { status: 400 });
   }
 
   // GitHub Search API only allows access to the first 1000 results
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
         page,
         totalCount: 1000,
         results: [],
-        error: "GitHub API limit reached. Only the first 1000 results are available for live search. Try a more specific location filter."
+        error:"GitHub API limit reached. Only the first 1000 results are available for live search. Try a more specific location filter."
     });
   }
 
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
       const score = existingMap.get(username.toLowerCase());
       return {
         username,
-        status: score !== undefined ? "analyzed" : "pending",
+        status: score !== undefined ?"analyzed" :"pending",
         score: score || null
       };
     });
@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
   } catch (error: any) {
     console.error("[github/search]", error);
     return NextResponse.json(
-      { error: "Search failed", details: error.message },
+      { error:"Search failed", details: error.message },
       { status: 500 }
     );
   }

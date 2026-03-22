@@ -1,17 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Search, Loader2, CheckCircle2, AlertCircle, PlusCircle } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { useState } from"react";
+import { useQuery, useMutation, useQueryClient } from"@tanstack/react-query";
+import { Input } from"@/components/ui/input";
+import { Button } from"@/components/ui/button";
+import { Search, Loader2, CheckCircle2, AlertCircle, PlusCircle } from"lucide-react";
+import { Badge } from"@/components/ui/badge";
+import Link from"next/link";
+import { Avatar, AvatarImage, AvatarFallback } from"@/components/ui/avatar";
 
 interface SearchResult {
   username: string;
-  status: "analyzed" | "pending";
+  status:"analyzed" |"pending";
   score: number | null;
 }
 
@@ -31,7 +31,7 @@ export default function DiscoverPage() {
     queryFn: async () => {
       const res = await fetch(`/api/github/search?location=${encodeURIComponent(location)}&page=${page}`);
       const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "Search failed");
+      if (!res.ok) throw new Error(json.error ||"Search failed");
       return json;
     },
     enabled: !!location,
@@ -50,7 +50,7 @@ export default function DiscoverPage() {
         return {
           ...old,
           results: old.results.map((r) => 
-            r.username === variables ? { ...r, status: "analyzed", score: data.totalScore } : r
+            r.username === variables ? { ...r, status:"analyzed", score: data.totalScore } : r
           ),
         };
       });
@@ -64,24 +64,24 @@ export default function DiscoverPage() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-200 py-24 px-6">
+    <div className="min-h-screen bg-gray-950 text-gray-200 py-24 px-6">
       <div className="container mx-auto max-w-4xl">
         <div className="mb-12 space-y-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-white">
             Discover Talent
           </h1>
-          <p className="text-lg text-neutral-400 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-400 max-w-2xl mx-auto">
             Find developers directly from GitHub by location. Add them to your leaderboard instantly.
           </p>
         </div>
 
         <form onSubmit={handleSearch} className="mb-12 flex flex-col sm:flex-row gap-4 max-w-xl mx-auto relative">
           <div className="relative flex-1 w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
             <Input
               type="text"
               placeholder="Enter location (e.g. San Francisco, London)"
-              className="pl-10 h-12 bg-neutral-900 border-neutral-800 text-lg focus:border-green-400/50 transition-colors"
+ className="pl-10 h-12 bg-gray-900 border-gray-800 text-lg focus:border-green-400/50 transition-colors"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
             />
@@ -100,13 +100,13 @@ export default function DiscoverPage() {
         {error && (
           <div className="text-center py-10 text-red-400 bg-red-900/10 rounded-lg border border-red-900/20 px-6">
             <AlertCircle className="h-8 w-8 mx-auto mb-2" />
-            <p>{error instanceof Error ? error.message : "Failed to load users. Please try again."}</p>
+            <p>{error instanceof Error ? error.message :"Failed to load users. Please try again."}</p>
           </div>
         )}
 
         {data && (
           <div className="space-y-6">
-            <div className="flex justify-between items-center text-sm text-neutral-500 font-mono uppercase tracking-widest px-2">
+            <div className="flex justify-between items-center text-sm text-gray-500  uppercase tracking-widest px-2">
               <span>{data.totalCount.toLocaleString()} Developers Found</span>
               <span>Page {page}</span>
             </div>
@@ -115,10 +115,10 @@ export default function DiscoverPage() {
               {data.results.map((user) => (
                 <div 
                   key={user.username}
-                  className="group flex items-center justify-between p-4 bg-neutral-900/50 border border-neutral-800 rounded-lg hover:border-neutral-700 transition-all"
+ className="group flex items-center justify-between p-4 bg-gray-900/50 border border-gray-800 rounded-lg hover:border-gray-700 transition-all"
                 >
                   <div className="flex items-center gap-4">
-                    <Avatar className="h-12 w-12 border border-neutral-800">
+                    <Avatar className="h-12 w-12 border border-gray-800">
                       <AvatarImage src={`https://github.com/${user.username}.png`} />
                       <AvatarFallback>{user.username.slice(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
@@ -126,17 +126,17 @@ export default function DiscoverPage() {
                       <div className="font-semibold text-white group-hover:text-green-400 transition-colors">
                         {user.username}
                       </div>
-                      <div className="text-sm text-neutral-500 font-mono">
-                        {user.status === "analyzed" ? (
+                      <div className="text-sm text-gray-500 ">
+                        {user.status ==="analyzed" ? (
                           <span className="text-green-400/80">Score: {user.score?.toFixed(0)}</span>
                         ) : (
-                          "Not ranked"
+"Not ranked"
                         )}
                       </div>
                     </div>
                   </div>
 
-                  {user.status === "analyzed" ? (
+                  {user.status ==="analyzed" ? (
                     <Badge variant="outline" className="border-green-900 text-green-400 bg-green-900/20">
                       <CheckCircle2 className="h-3 w-3 mr-1" />
                       Ranked
@@ -145,7 +145,7 @@ export default function DiscoverPage() {
                     <Button 
                       size="sm" 
                       variant="ghost" 
-                      className="text-neutral-400 hover:text-white hover:bg-neutral-800"
+ className="text-gray-400 hover:text-white hover:bg-gray-800"
                       disabled={analyzeMutation.isPending && analyzeMutation.variables === user.username}
                       onClick={() => analyzeMutation.mutate(user.username)}
                     >
@@ -180,7 +180,7 @@ export default function DiscoverPage() {
               </Button>
             </div>
             {page >= 10 && (
-              <p className="text-center text-xs text-neutral-600 mt-4 font-mono">
+              <p className="text-center text-xs text-gray-600 mt-4 ">
                 GitHub search limit reached (1,000 users). Try refining your location to discover more talent.
               </p>
             )}

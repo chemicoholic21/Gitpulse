@@ -1,4 +1,4 @@
-import { CATEGORY_MAP, LANGUAGE_HINTS } from "./categoryMap";
+import { CATEGORY_MAP, LANGUAGE_HINTS } from"./categoryMap";
 
 export interface RawGitHubData {
     user: {
@@ -38,11 +38,11 @@ export interface RawGitHubData {
 }
 
 export type ExperienceLevel =
-    | "Newcomer"
-    | "Contributor"
-    | "Active Contributor"
-    | "Core Contributor"
-    | "Open Source Leader";
+    |"Newcomer"
+    |"Contributor"
+    |"Active Contributor"
+    |"Core Contributor"
+    |"Open Source Leader";
 
 export interface TopRepositorySummary {
     name: string;
@@ -79,11 +79,11 @@ function scoreRepo(stars: number, userPRs: number, totalPRs: number): number {
 }
 
 export function deriveExperienceLevel(totalScore: number): ExperienceLevel {
-    if (totalScore < 10) return "Newcomer";
-    if (totalScore < 100) return "Contributor";
-    if (totalScore < 500) return "Active Contributor";
-    if (totalScore < 2000) return "Core Contributor";
-    return "Open Source Leader";
+    if (totalScore < 10) return"Newcomer";
+    if (totalScore < 100) return"Contributor";
+    if (totalScore < 500) return"Active Contributor";
+    if (totalScore < 2000) return"Core Contributor";
+    return"Open Source Leader";
 }
 
 export interface LeaderboardEntry {
