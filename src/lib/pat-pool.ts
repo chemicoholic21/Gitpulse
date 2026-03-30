@@ -18,36 +18,53 @@ if (TOKENS.length === 0 && process.env.GITHUB_TOKEN) {
 }
 
 const TOKEN_CACHE_KEY = (index: number) => `pat:ratelimit:${index}`;
+const TOKEN_BLACKLIST_KEY = (index: number) => `pat:blacklist:${index}`;
 
 export async function getBestToken(): Promise<{ token: string; index: number }> {
   if (TOKENS.length === 0) {
     throw new Error("No GitHub tokens configured in PAT pool");
   }
 
-  // Get remaining points for all tokens from Redis
-  const remainingPoints = await Promise.all(
+  // Get remaining points and blacklist status for all tokens
+  const tokenStats = await Promise.all(
     TOKENS.map(async (_, i) => {
-      const points = await redis.get<number>(TOKEN_CACHE_KEY(i));
-      return points ?? 5000; // Default to 5000 if not tracked yet
+      const [points, isBlacklisted] = await Promise.all([
+        redis.get<number>(TOKEN_CACHE_KEY(i)),
+        redis.get<boolean>(TOKEN_BLACKLIST_KEY(i))
+      ]);
+      return { 
+        index: i, 
+        points: points ?? 5000, 
+        isBlacklisted: !!isBlacklisted 
+      };
     })
   );
 
-  // Find token with highest remaining points
-  let bestIndex = 0;
-  let maxPoints = -1;
+  // Filter out blacklisted tokens
+  const validTokens = tokenStats.filter(t => !t.isBlacklisted);
 
-  for (let i = 0; i < remainingPoints.length; i++) {
-    if (remainingPoints[i] > maxPoints) {
-      maxPoints = remainingPoints[i];
-      bestIndex = i;
+  if (validTokens.length === 0) {
+    throw new Error("All GitHub tokens in pool are invalid or blacklisted");
+  }
+
+  // Find token with highest remaining points among valid ones
+  let best = validTokens[0];
+  for (const t of validTokens) {
+    if (t.points > best.points) {
+      best = t;
     }
   }
 
-  if (maxPoints < 100) {
-    throw new Error("All GitHub tokens in pool are rate-limited (< 100 points remaining)");
+  if (best.points < 100) {
+    throw new Error("All available GitHub tokens are rate-limited (< 100 points remaining)");
   }
 
-  return { token: TOKENS[bestIndex], index: bestIndex };
+  return { token: TOKENS[best.index], index: best.index };
+}
+
+export async function blacklistToken(index: number) {
+  // Blacklist for 24 hours if a 401 is hit
+  await redis.set(TOKEN_BLACKLIST_KEY(index), true, { ex: 86400 });
 }
 
 export async function updateTokenPoints(index: number, remaining: number) {

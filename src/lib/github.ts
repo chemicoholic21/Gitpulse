@@ -1,6 +1,6 @@
 import { graphql } from"@octokit/graphql";
 import { RawGitHubData } from"./scoring";
-import { getBestToken, updateTokenPoints } from"./pat-pool";
+import { getBestToken, updateTokenPoints, blacklistToken } from"./pat-pool";
 
 // ---------------------------------------------------------------------------
 // GraphQL query types (responses)
@@ -240,9 +240,17 @@ export async function fetchUserAnalysis(
 
   const client = getClient(token);
 
-  const userRes = await client<UserAnalysisResponse>(USER_ANALYSIS_QUERY, {
-    login: username,
-  });
+  let userRes;
+  try {
+    userRes = await client<UserAnalysisResponse>(USER_ANALYSIS_QUERY, {
+      login: username,
+    });
+  } catch (error: any) {
+    if (index !== -1 && (error.status === 401 || error.message.toLowerCase().includes("bad credentials"))) {
+      await blacklistToken(index);
+    }
+    throw error;
+  }
 
   // Update token points in pool if not a manual session token
   if (index !== -1) {
@@ -291,11 +299,19 @@ export async function fetchUserAnalysis(
         .slice(0, 50) // Search limit to avoid huge query strings
         .map((r) => `repo:${r.ownerLogin}/${r.name}`);
       
-      const searchQuery = `${repoQueries.join("")} is:pr is:merged author:${username}`;
+      const searchQuery = `${repoQueries.join(" ")} is:pr is:merged author:${username}`;
 
-      const searchRes = await client<SearchResponse>(SEARCH_MERGED_PRS_QUERY, {
-        searchQuery,
-      });
+      let searchRes;
+      try {
+        searchRes = await client<SearchResponse>(SEARCH_MERGED_PRS_QUERY, {
+          searchQuery,
+        });
+      } catch (error: any) {
+        if (index !== -1 && (error.status === 401 || error.message.toLowerCase().includes("bad credentials"))) {
+          await blacklistToken(index);
+        }
+        throw error;
+      }
 
       // Update token points again after second query
       if (index !== -1) {

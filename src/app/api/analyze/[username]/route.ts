@@ -5,7 +5,7 @@ import { fetchUserAnalysis, extractLinkedIn } from"@/lib/github";
 import { computeScore } from"@/lib/scoring";
 import { db } from"@/lib/db";
 import { analyses, leaderboard } from"@/lib/schema";
-import { eq } from"drizzle-orm";
+import { eq, sql } from"drizzle-orm";
 
 export async function GET(
   request: NextRequest,
@@ -30,7 +30,100 @@ export async function GET(
       return NextResponse.json(cached);
     }
 
-    // 3. Check Redis cache for raw data (maybe we just need to re-score)
+    // 3. Check Neon DB (L2 Cache)
+    const [dbResult] = await db
+      .select()
+      .from(analyses)
+      .where(eq(analyses.id, username.toLowerCase()))
+      .limit(1);
+
+    if (dbResult && dbResult.cachedAt) {
+      const now = new Date();
+      const cachedAt = new Date(dbResult.cachedAt);
+      const diffMs = now.getTime() - cachedAt.getTime();
+      const diffHrs = diffMs / (1000 * 60 * 60);
+
+      if (diffHrs < 6) {
+        // Construct base profile
+        const profile: any = {
+          user: {
+            login: username.toLowerCase(),
+            name: dbResult.username,
+            avatarUrl: "", // fallback
+            url: `https://github.com/${username}`,
+            bio: null,
+            followers: 0,
+            following: 0,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            isHireable: false,
+            company: null,
+            websiteUrl: null,
+            location: null,
+            email: null,
+            twitterUsername: null,
+            linkedin: dbResult.linkedin,
+          },
+          totalScore: dbResult.totalScore || 0,
+          aiScore: dbResult.aiScore || 0,
+          backendScore: dbResult.backendScore || 0,
+          frontendScore: dbResult.frontendScore || 0,
+          devopsScore: dbResult.devopsScore || 0,
+          dataScore: dbResult.dataScore || 0,
+          contributionCount: dbResult.contributionCount || 0,
+          uniqueSkills: [],
+          topRepositories: [],
+          languageBreakdown: {},
+          experienceLevel:"Newcomer"
+        };
+
+        try {
+          profile.uniqueSkills = dbResult.uniqueSkillsJson ? JSON.parse(dbResult.uniqueSkillsJson) : [];
+          profile.topRepositories = dbResult.topReposJson ? JSON.parse(dbResult.topReposJson) : [];
+          profile.languageBreakdown = dbResult.languagesJson ? JSON.parse(dbResult.languagesJson) : {};
+        } catch (e) {
+          console.error(`[analyze/${username}] Failed to parse JSON from DB`, e);
+        }
+
+        // Get more complete user details from leaderboard
+        // Use case-insensitive lookup for leaderboard to be safe
+        const [lbResult] = await db
+          .select()
+          .from(leaderboard)
+          .where(sql`lower(${leaderboard.username}) = ${username.toLowerCase()}`)
+          .limit(1);
+
+        if (lbResult) {
+          profile.user = {
+            ...profile.user,
+            login: lbResult.username,
+            name: lbResult.name || profile.user.name,
+            avatarUrl: lbResult.avatarUrl,
+            url: lbResult.url,
+            bio: lbResult.bio,
+            createdAt: lbResult.createdAt?.toISOString() || profile.user.createdAt,
+            updatedAt: lbResult.updatedAt?.toISOString() || profile.user.updatedAt,
+            isHireable: lbResult.hireable || false,
+            company: lbResult.company,
+            websiteUrl: lbResult.blog,
+            location: lbResult.location,
+            email: lbResult.email,
+            twitterUsername: lbResult.twitterUsername,
+            linkedin: lbResult.linkedin || profile.user.linkedin,
+          };
+        }
+
+        // Re-derive experience level
+        const { deriveExperienceLevel } = await import("@/lib/scoring");
+        profile.experienceLevel = deriveExperienceLevel(profile.totalScore);
+
+        // Populate Redis for subsequent hits
+        await setCachedAnalysis(username, profile);
+        return NextResponse.json(profile);
+      }
+    }
+
+    // 4. Check Redis cache for raw data (maybe we just need to re-score)
     let rawData = await getRawAnalysis(username);
 
     if (!rawData) {
