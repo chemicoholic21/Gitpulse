@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
     const hasX = searchParams.get("hasX") ==="true";
     const hasEmail = searchParams.get("hasEmail") ==="true";
     const skill = searchParams.get("skill");
+    const openToWork = searchParams.get("openToWork");
     const sortBy = searchParams.get("sortBy") ||"totalScore";
     const sortOrder = searchParams.get("sortOrder") ||"desc";
 
@@ -63,6 +64,13 @@ export async function GET(request: NextRequest) {
     if (skill) {
       filters.push(sql`${leaderboard.uniqueSkillsJson} ILIKE ${'%' + skill + '%'}`);
     }
+
+    // Filter by LinkedIn Open to Work status
+    if (openToWork === "true") {
+      filters.push(eq(leaderboard.linkedinOpenToWork, true));
+    } else if (openToWork === "false") {
+      filters.push(eq(leaderboard.linkedinOpenToWork, false));
+    }
     
     // If a category is selected, we might want to only show users with score > 0 in that category
     if (category) {
@@ -81,6 +89,8 @@ export async function GET(request: NextRequest) {
       orderByColumn = leaderboard.username;
     } else if (sortBy ==="hireable") {
       orderByColumn = leaderboard.hireable;
+    } else if (sortBy ==="linkedinOpenToWork") {
+      orderByColumn = leaderboard.linkedinOpenToWork;
     } else {
       orderByColumn = scoreColumn;
     }

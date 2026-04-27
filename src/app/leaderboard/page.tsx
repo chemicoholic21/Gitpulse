@@ -19,6 +19,7 @@ export default function LeaderboardPage() {
   const [hasEmail, setHasEmail] = useState(false);
   const [skill, setSkill] = useState("");
   const [debouncedSkill, setDebouncedSkill] = useState("");
+  const [openToWorkFilter, setOpenToWorkFilter] = useState("");
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(20);
 
@@ -74,11 +75,16 @@ export default function LeaderboardPage() {
     setPageIndex(0);
   };
 
+  const handleOpenToWorkFilterChange = (value: string) => {
+    setOpenToWorkFilter(value);
+    setPageIndex(0);
+  };
+
   const { data, isLoading } = useLeaderboard(
-    pageSize, 
-    debouncedLocation, 
-    pageIndex + 1, 
-    debouncedSearch, 
+    pageSize,
+    debouncedLocation,
+    pageIndex + 1,
+    debouncedSearch,
     category,
     sortBy,
     sortOrder,
@@ -87,6 +93,7 @@ export default function LeaderboardPage() {
     hasX,
     hasEmail,
     debouncedSkill,
+    openToWorkFilter,
   );
 
   return (
@@ -119,6 +126,7 @@ export default function LeaderboardPage() {
               onHireableChange={handleHireableChange}
               onContactFilterChange={handleContactFilterChange}
               onSkillChange={handleSkillChange}
+              onOpenToWorkFilterChange={handleOpenToWorkFilterChange}
               search={search}
               location={location}
               category={category}
@@ -129,6 +137,7 @@ export default function LeaderboardPage() {
               hasX={hasX}
               hasEmail={hasEmail}
               skill={skill}
+              openToWorkFilter={openToWorkFilter}
               isLoading={isLoading}
             />
           )}

@@ -106,6 +106,7 @@ export interface LeaderboardEntry {
     bio: string | null;
     twitterUsername: string | null;
     linkedin: string | null;
+    linkedinOpenToWork: boolean | null;
     hireable: boolean | null;
     createdAt: string | null;
     updatedAt: string | null;

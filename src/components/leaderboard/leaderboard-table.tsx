@@ -47,6 +47,7 @@ interface LeaderboardTableProps {
   onHireableChange: (hireable: boolean) => void;
   onContactFilterChange: (type: "hasLinkedIn" | "hasX" | "hasEmail", value: boolean) => void;
   onSkillChange: (skill: string) => void;
+  onOpenToWorkFilterChange: (value: string) => void;
   search: string;
   location: string;
   category: string;
@@ -57,14 +58,15 @@ interface LeaderboardTableProps {
   hasX: boolean;
   hasEmail: boolean;
   skill: string;
+  openToWorkFilter: string;
   isLoading?: boolean;
 }
 
-export function LeaderboardTable({ 
-  data, 
-  totalCount, 
-  pageIndex, 
-  pageSize, 
+export function LeaderboardTable({
+  data,
+  totalCount,
+  pageIndex,
+  pageSize,
   onPageChange,
   onPageSizeChange,
   onSearchChange,
@@ -74,6 +76,7 @@ export function LeaderboardTable({
   onHireableChange,
   onContactFilterChange,
   onSkillChange,
+  onOpenToWorkFilterChange,
   search,
   location,
   category,
@@ -84,6 +87,7 @@ export function LeaderboardTable({
   hasX,
   hasEmail,
   skill,
+  openToWorkFilter,
   isLoading
 }: LeaderboardTableProps) {
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
@@ -201,6 +205,36 @@ export function LeaderboardTable({
             Hireable
           </Badge>
         ) : null;
+      },
+    },
+    {
+      accessorKey: "linkedinOpenToWork",
+      header: () => (
+        <Button
+          variant="ghost"
+          onClick={() => toggleSort("linkedinOpenToWork")}
+          className="hover:bg-white/5 -ml-4 text-[10px] uppercase tracking-wider text-slate-400"
+        >
+          Open to Work
+          {getSortIcon("linkedinOpenToWork")}
+        </Button>
+      ),
+      cell: ({ row }) => {
+        const openToWork = row.getValue("linkedinOpenToWork");
+        if (openToWork === true) {
+          return (
+            <Badge variant="outline" className="bg-[#00D9F5]/10 text-[#00D9F5] border-[#00D9F5]/20 px-2 py-0.5 text-[10px] uppercase font-bold tracking-widest rounded-md">
+              Open
+            </Badge>
+          );
+        } else if (openToWork === false) {
+          return (
+            <Badge variant="outline" className="bg-slate-500/10 text-slate-400 border-slate-500/20 px-2 py-0.5 text-[10px] uppercase font-bold tracking-widest rounded-md">
+              Closed
+            </Badge>
+          );
+        }
+        return <span className="text-slate-600 text-[10px]">—</span>;
       },
     },
     {
@@ -340,6 +374,68 @@ export function LeaderboardTable({
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
+              <Button variant="outline" className={cn(
+                "flex-1 md:flex-none h-12 bg-[#0b0f1a] border border-white/10 rounded-xl min-w-[160px] justify-between px-6 text-xs font-bold uppercase tracking-wider",
+                openToWorkFilter ? "border-[#00D9F5]/50 text-[#00D9F5]" : "text-slate-400 hover:text-white"
+              )}>
+                <span className="flex items-center gap-2">
+                  <Linkedin className="h-4 w-4 text-slate-500" />
+                  {openToWorkFilter === "true" ? "OPEN_TO_WORK" : openToWorkFilter === "false" ? "NOT_OPEN" : "OPEN_STATUS"}
+                </span>
+                <ChevronDown className="h-4 w-4 opacity-50" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="bg-[#121826] border border-white/10 text-slate-300 min-w-[200px] rounded-xl p-2 shadow-2xl">
+              <DropdownMenuItem
+                className={cn(
+                  "flex items-center gap-3 hover:bg-white/5 cursor-pointer text-xs font-bold uppercase tracking-wider p-3 rounded-lg mb-1",
+                  openToWorkFilter === "" && "bg-white/5"
+                )}
+                onClick={() => onOpenToWorkFilterChange("")}
+              >
+                <div className={cn(
+                  "h-5 w-5 rounded border flex items-center justify-center transition-colors",
+                  openToWorkFilter === "" ? "bg-[#00D9F5] border-[#00D9F5]" : "bg-[#0b0f1a] border-white/20"
+                )}>
+                  {openToWorkFilter === "" && <Check className="h-3.5 w-3.5 text-[#0b0f1a]" />}
+                </div>
+                All
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className={cn(
+                  "flex items-center gap-3 hover:bg-white/5 cursor-pointer text-xs font-bold uppercase tracking-wider p-3 rounded-lg mb-1",
+                  openToWorkFilter === "true" && "bg-white/5"
+                )}
+                onClick={() => onOpenToWorkFilterChange("true")}
+              >
+                <div className={cn(
+                  "h-5 w-5 rounded border flex items-center justify-center transition-colors",
+                  openToWorkFilter === "true" ? "bg-[#00D9F5] border-[#00D9F5]" : "bg-[#0b0f1a] border-white/20"
+                )}>
+                  {openToWorkFilter === "true" && <Check className="h-3.5 w-3.5 text-[#0b0f1a]" />}
+                </div>
+                Open to Work
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className={cn(
+                  "flex items-center gap-3 hover:bg-white/5 cursor-pointer text-xs font-bold uppercase tracking-wider p-3 rounded-lg",
+                  openToWorkFilter === "false" && "bg-white/5"
+                )}
+                onClick={() => onOpenToWorkFilterChange("false")}
+              >
+                <div className={cn(
+                  "h-5 w-5 rounded border flex items-center justify-center transition-colors",
+                  openToWorkFilter === "false" ? "bg-[#00D9F5] border-[#00D9F5]" : "bg-[#0b0f1a] border-white/20"
+                )}>
+                  {openToWorkFilter === "false" && <Check className="h-3.5 w-3.5 text-[#0b0f1a]" />}
+                </div>
+                Not Open
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
               <Button variant="outline" className="flex-1 md:flex-none h-12 bg-[#0b0f1a] border border-white/10 rounded-xl text-slate-400 hover:text-white min-w-[160px] justify-between px-6 text-xs font-bold uppercase tracking-wider">
                 <span className="flex items-center gap-2">
                   <Filter className="h-4 w-4 text-slate-500" />
@@ -350,8 +446,8 @@ export function LeaderboardTable({
             </DropdownMenuTrigger>
             <DropdownMenuContent className="bg-[#121826] border border-white/10 text-slate-300 min-w-[200px] rounded-xl p-2 shadow-2xl">
               {["", "ai", "backend", "frontend", "devops", "data"].map((c) => (
-                <DropdownMenuItem 
-                  key={c} 
+                <DropdownMenuItem
+                  key={c}
                   className="capitalize hover:bg-white/5 cursor-pointer text-xs font-bold uppercase tracking-wider p-3 rounded-lg mb-1"
                   onClick={() => onCategoryChange(c)}
                 >
