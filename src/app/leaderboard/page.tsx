@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from"react";
-import { useLeaderboard } from"@/hooks/useLeaderboard";
+import { useLeaderboard, OpenToWorkFilter } from"@/hooks/useLeaderboard";
 import { LeaderboardTable } from"@/components/leaderboard/leaderboard-table";
 import LeaderboardSkeleton from"@/components/skeletons/LeaderboardSkeleton";
 
@@ -19,7 +19,7 @@ export default function LeaderboardPage() {
   const [hasEmail, setHasEmail] = useState(false);
   const [skill, setSkill] = useState("");
   const [debouncedSkill, setDebouncedSkill] = useState("");
-  const [openToWorkFilter, setOpenToWorkFilter] = useState("");
+  const [openToWorkFilter, setOpenToWorkFilter] = useState<OpenToWorkFilter>("");
   const [pageIndex, setPageIndex] = useState(0);
   const [pageSize, setPageSize] = useState(20);
 
@@ -75,7 +75,7 @@ export default function LeaderboardPage() {
     setPageIndex(0);
   };
 
-  const handleOpenToWorkFilterChange = (value: string) => {
+  const handleOpenToWorkFilterChange = (value: OpenToWorkFilter) => {
     setOpenToWorkFilter(value);
     setPageIndex(0);
   };

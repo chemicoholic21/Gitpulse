@@ -8,6 +8,8 @@ export interface LeaderboardResponse {
   limit: number;
 }
 
+export type OpenToWorkFilter = "" | "true" | "false" | "unknown";
+
 export function useLeaderboard(
   limit?: number,
   location?: string,
@@ -21,7 +23,7 @@ export function useLeaderboard(
   hasX?: boolean,
   hasEmail?: boolean,
   skill?: string,
-  openToWork?: string,
+  openToWork?: OpenToWorkFilter,
 ) {
   return useQuery({
     queryKey: ["leaderboard", limit, location, page, search, category, sortBy, sortOrder, hireable, hasLinkedIn, hasX, hasEmail, skill, openToWork],

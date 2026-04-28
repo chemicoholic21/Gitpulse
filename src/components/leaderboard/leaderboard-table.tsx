@@ -23,6 +23,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { LeaderboardEntry } from "@/lib/scoring";
+import { OpenToWorkFilter } from "@/hooks/useLeaderboard";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { SkillBreakdown } from "@/components/SkillBreakdown";
@@ -47,7 +48,7 @@ interface LeaderboardTableProps {
   onHireableChange: (hireable: boolean) => void;
   onContactFilterChange: (type: "hasLinkedIn" | "hasX" | "hasEmail", value: boolean) => void;
   onSkillChange: (skill: string) => void;
-  onOpenToWorkFilterChange: (value: string) => void;
+  onOpenToWorkFilterChange: (value: OpenToWorkFilter) => void;
   search: string;
   location: string;
   category: string;
@@ -58,7 +59,7 @@ interface LeaderboardTableProps {
   hasX: boolean;
   hasEmail: boolean;
   skill: string;
-  openToWorkFilter: string;
+  openToWorkFilter: OpenToWorkFilter;
   isLoading?: boolean;
 }
 
@@ -380,7 +381,7 @@ export function LeaderboardTable({
               )}>
                 <span className="flex items-center gap-2">
                   <Linkedin className="h-4 w-4 text-slate-500" />
-                  {openToWorkFilter === "true" ? "OPEN" : openToWorkFilter === "false" ? "CLOSED" : openToWorkFilter === "null" ? "UNKNOWN" : "OPEN_STATUS"}
+                  {openToWorkFilter === "true" ? "OPEN" : openToWorkFilter === "false" ? "CLOSED" : openToWorkFilter === "unknown" ? "UNKNOWN" : "OPEN_STATUS"}
                 </span>
                 <ChevronDown className="h-4 w-4 opacity-50" />
               </Button>
@@ -434,15 +435,15 @@ export function LeaderboardTable({
               <DropdownMenuItem
                 className={cn(
                   "flex items-center gap-3 hover:bg-white/5 cursor-pointer text-xs font-bold uppercase tracking-wider p-3 rounded-lg",
-                  openToWorkFilter === "null" && "bg-white/5"
+                  openToWorkFilter === "unknown" && "bg-white/5"
                 )}
-                onClick={() => onOpenToWorkFilterChange("null")}
+                onClick={() => onOpenToWorkFilterChange("unknown")}
               >
                 <div className={cn(
                   "h-5 w-5 rounded border flex items-center justify-center transition-colors",
-                  openToWorkFilter === "null" ? "bg-[#00D9F5] border-[#00D9F5]" : "bg-[#0b0f1a] border-white/20"
+                  openToWorkFilter === "unknown" ? "bg-[#00D9F5] border-[#00D9F5]" : "bg-[#0b0f1a] border-white/20"
                 )}>
-                  {openToWorkFilter === "null" && <Check className="h-3.5 w-3.5 text-[#0b0f1a]" />}
+                  {openToWorkFilter === "unknown" && <Check className="h-3.5 w-3.5 text-[#0b0f1a]" />}
                 </div>
                 Unknown
               </DropdownMenuItem>

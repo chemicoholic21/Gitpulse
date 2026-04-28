@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from"next/server";
 import { db } from"@/lib/db";
 import { leaderboard } from"@/lib/schema";
-import { desc, ilike, count, sql, or, and, eq } from"drizzle-orm";
+import { desc, ilike, count, sql, or, and, eq, isNull } from"drizzle-orm";
 
 export async function GET(request: NextRequest) {
   try {
@@ -70,8 +70,8 @@ export async function GET(request: NextRequest) {
       filters.push(eq(leaderboard.isOpenToWork, true));
     } else if (openToWork === "false") {
       filters.push(eq(leaderboard.isOpenToWork, false));
-    } else if (openToWork === "null") {
-      filters.push(sql`${leaderboard.isOpenToWork} IS NULL`);
+    } else if (openToWork === "unknown") {
+      filters.push(isNull(leaderboard.isOpenToWork));
     }
     
     // If a category is selected, we might want to only show users with score > 0 in that category
