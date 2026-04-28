@@ -208,19 +208,19 @@ export function LeaderboardTable({
       },
     },
     {
-      accessorKey: "linkedinOpenToWork",
+      accessorKey: "isOpenToWork",
       header: () => (
         <Button
           variant="ghost"
-          onClick={() => toggleSort("linkedinOpenToWork")}
+          onClick={() => toggleSort("isOpenToWork")}
           className="hover:bg-white/5 -ml-4 text-[10px] uppercase tracking-wider text-slate-400"
         >
           Open to Work
-          {getSortIcon("linkedinOpenToWork")}
+          {getSortIcon("isOpenToWork")}
         </Button>
       ),
       cell: ({ row }) => {
-        const openToWork = row.getValue("linkedinOpenToWork");
+        const openToWork = row.getValue("isOpenToWork");
         if (openToWork === true) {
           return (
             <Badge variant="outline" className="bg-[#00D9F5]/10 text-[#00D9F5] border-[#00D9F5]/20 px-2 py-0.5 text-[10px] uppercase font-bold tracking-widest rounded-md">

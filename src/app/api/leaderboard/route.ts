@@ -67,9 +67,9 @@ export async function GET(request: NextRequest) {
 
     // Filter by LinkedIn Open to Work status
     if (openToWork === "true") {
-      filters.push(eq(leaderboard.linkedinOpenToWork, true));
+      filters.push(eq(leaderboard.isOpenToWork, true));
     } else if (openToWork === "false") {
-      filters.push(eq(leaderboard.linkedinOpenToWork, false));
+      filters.push(eq(leaderboard.isOpenToWork, false));
     }
     
     // If a category is selected, we might want to only show users with score > 0 in that category
@@ -89,8 +89,8 @@ export async function GET(request: NextRequest) {
       orderByColumn = leaderboard.username;
     } else if (sortBy ==="hireable") {
       orderByColumn = leaderboard.hireable;
-    } else if (sortBy ==="linkedinOpenToWork") {
-      orderByColumn = leaderboard.linkedinOpenToWork;
+    } else if (sortBy ==="isOpenToWork") {
+      orderByColumn = leaderboard.isOpenToWork;
     } else {
       orderByColumn = scoreColumn;
     }

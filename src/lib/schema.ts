@@ -36,8 +36,9 @@ export const leaderboard = pgTable("leaderboard", {
     bio: text("bio"),
     twitterUsername: text("twitter_username"),
     linkedin: text("linkedin"),
-    linkedinOpenToWork: boolean("linkedin_open_to_work"),
-    hireable: boolean("hireable"),
+    hireable: boolean("hireable").notNull().default(false),
+    isOpenToWork: boolean("is_open_to_work"),
+    otwScrapedAt: timestamp("otw_scraped_at"),
     createdAt: timestamp("created_at"),
-    updatedAt: timestamp("updated_at").defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
