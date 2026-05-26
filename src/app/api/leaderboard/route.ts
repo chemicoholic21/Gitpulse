@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
 
     // Filter by skill (case-insensitive substring match in JSON array)
     if (skill) {
-      filters.push(sql`${leaderboard.uniqueSkillsJson} ILIKE ${'%' + skill + '%'}`);
+      filters.push(sql`EXISTS (SELECT 1 FROM unnest(${leaderboard.uniqueSkills}) s WHERE s ILIKE ${'%' + skill + '%'})`);
     }
 
     // Filter by LinkedIn Open to Work status
@@ -119,19 +119,11 @@ export async function GET(request: NextRequest) {
       .offset(offset);
 
     const data = topUsers.map((user, index) => {
-      const { uniqueSkillsJson, ...rest } = user;
-      let uniqueSkills: string[] = [];
-      if (uniqueSkillsJson) {
-        try {
-          uniqueSkills = JSON.parse(uniqueSkillsJson);
-        } catch (e) {
-          console.error("Failed to parse uniqueSkillsJson", e);
-        }
-      }
+      const { uniqueSkills, ...rest } = user;
       return {
         rank: offset + index + 1,
         ...rest,
-        uniqueSkills,
+        uniqueSkills: uniqueSkills ?? [],
       };
     });
 

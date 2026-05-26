@@ -94,7 +94,7 @@ export const leaderboard = pgTable("leaderboard", {
     frontendScore: real("frontend_score").default(0),
     devopsScore: real("devops_score").default(0),
     dataScore: real("data_score").default(0),
-    uniqueSkillsJson: text("unique_skills_json"),
+    uniqueSkills: text("unique_skills").array(),
     company: text("company"),
     blog: text("blog"),
     location: text("location"),
